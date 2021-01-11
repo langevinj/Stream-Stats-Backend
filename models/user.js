@@ -80,6 +80,7 @@ class User {
           ],
       );  
       const user = result.rows[0];  
+      
       return user;
   }
 }

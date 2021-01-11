@@ -41,3 +41,5 @@ router.post("/", ensureAdmin, async function (req, res, next) {
         return next(err);
     }
 });
+
+module.exports = router;

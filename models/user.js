@@ -45,13 +45,13 @@ class User {
 
     /** Register user with data.
      *
-     * Returns { username, firstName, lastName, email, isAdmin }
+     * Returns { username, email, isAdmin, bandName }
      *
      * Throws BadRequestError on duplicates.
      **/
 
   static async register(
-      { username, password, email, isAdmin, bandName }) {
+      { username, password, email, isAdmin=false, bandName="" }) {
       const duplicateCheck = await db.query(
           `SELECT username
          FROM users

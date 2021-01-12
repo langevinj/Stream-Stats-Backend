@@ -1,7 +1,7 @@
 
 /** Routes for auth*/
 
-// const jsonschema = require("jsonschema");
+const jsonschema = require("jsonschema");
 
 const User = require("../models/user");
 const express = require("express");

@@ -9,7 +9,7 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
-const spotifyRoutes = require('./route/spotify');
+const spotifyRoutes = require('./routes/spotify');
 const bandcampRoutes = require('./routes/bandcamp');
 const distrokidRoutes = require('./routes/distrokid');
 

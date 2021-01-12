@@ -51,7 +51,7 @@ class User {
      **/
 
   static async register(
-      { username, password, email, isAdmin=false, bandName="" }) {
+      { username, password, email, isAdmin, bandName }) {
       const duplicateCheck = await db.query(
           `SELECT username
          FROM users
@@ -70,7 +70,7 @@ class User {
           is_admin,
           band_name)
          VALUES ($1, $2, $3, $4, $5)
-         RETURNING username, email, is_admin AS "isAdmin", band_name AS "bandName`,
+         RETURNING username, email, is_admin AS "isAdmin", band_name AS "bandName"`,
           [
               username,
               hashedPassword,

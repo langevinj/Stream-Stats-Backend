@@ -24,7 +24,7 @@ class User {
       const result = await db.query(
           `SELECT username,
                 password,
-                band_name as "bandName,
+                band_name as "bandName",
                 email,
                 is_admin AS "isAdmin"
          FROM users

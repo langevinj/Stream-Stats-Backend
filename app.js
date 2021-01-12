@@ -25,3 +25,4 @@ app.use("/spotify", spotifyRoutes);
 app.use("/bandcamp", bandcampRoutes);
 app.use("/distrokid", distrokidRoutes);
 
+module.exports = app;

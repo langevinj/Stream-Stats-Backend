@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "examples": [
+        {
+            "username": "testuser123",
+            "password": "fakepwd*&78`tt"
+        }
+    ],
+    "required": [
+        "username",
+        "password"
+    ],
+    "properties": {
+        "username": {
+            "type": "string",
+            "examples": [
+                "testuser123"
+            ]
+        },
+        "password": {
+            "type": "string",
+            "examples": [
+                "fakepwd*&78`tt"
+            ]
+        }
+    },
+    "additionalProperties": true
+}

@@ -11,7 +11,7 @@ const fs = require("fs")
 class Distrokid {
 
     //parse the raw data from the user
-    static async processRawImport({ page }) {
+    static async processRawImport({ page, username }) {
         await fs.writeFile('distrokid.txt', page, 'utf8', (err) => {
             if(err) throw err;
             console.log('The file has been saved!');
@@ -49,7 +49,7 @@ class Distrokid {
                 fullData.push(tempObj)
             }
 
-            console.log(fullData)
+            await insertIntoDB(fullData);
         }
         
         //this whole filtering process should be cleaned up for time complexity reasons
@@ -59,6 +59,33 @@ class Distrokid {
 
         function checkForTableEnd(line){
             return line.includes('Some info about earnings');
+        }
+
+        async function insertIntoDB(data){
+            let allQueries = []
+            for(let dataset in data){
+                const result = db.query(
+                    `INSERT INTO distrokid
+                    (username, reporting_month, sale_month, store, title, quantity, release_type, paid, sale_country, earnings)
+                    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                    [
+                        username,
+                        dataset.reportingMonth,
+                        dataset.saleMonth,
+                        dataset.store,
+                        dataset.title,
+                        praseInt(dataset.quantity),
+                        dataset.releaseType,
+                        dataset.paid,
+                        dataset.saleCountry,
+                        parseFloat(dataset.earnings.substring(1))
+                    ],
+                );
+                allQueries.push(result);
+            }
+
+            await Promise.all(allQueries);
+            console.log("The Distrokid data has been saved!");
         }
         
         

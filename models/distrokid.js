@@ -66,26 +66,31 @@ class Distrokid {
             let allQueries = []
             let count = 0;
             for(let dataset of data){
-                if(dataset.earnings !== undefined){
-                    let result = await db.query(
-                        `INSERT INTO distrokid
-                    (username, reporting_month, sale_month, store, title, quantity, release_type, paid, sale_country, earnings)
-                    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-                        [
-                            username,
-                            dataset.reportingMonth,
-                            dataset.saleMonth,
-                            dataset.store,
-                            dataset.title,
-                            parseInt(dataset.quantity),
-                            dataset.releaseType,
-                            dataset.paid,
-                            dataset.saleCountry,
-                            parseFloat(dataset.earnings.substring(1))
-                        ],
-                    );
-                    count++;
-                    allQueries.push(result);
+                try{
+                    if(dataset.earnings !== undefined){
+                        let result = db.query(
+                            `INSERT INTO distrokid
+                        (username, reporting_month, sale_month, store, title, quantity,     release_type, paid, sale_country, earnings)
+                        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                        RETURNING username`,
+                            [
+                                username,
+                                dataset.reportingMonth,
+                                dataset.saleMonth,
+                                dataset.store,
+                                dataset.title,
+                                parseInt(dataset.quantity),
+                                dataset.releaseType,
+                                dataset.paid,
+                                dataset.saleCountry,
+                                parseFloat(dataset.earnings.substring(1))
+                            ],
+                        );
+                        count++;
+                        allQueries.push(result);
+                    }
+                } catch (err){
+                    throw new Error("Error importing data.")
                 }
             }
 

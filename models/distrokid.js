@@ -1,12 +1,9 @@
 "use strict"
 
 const db = require("../db");
-const {
-    NotFoundError,
-    BadRequestError,
-    UnauthorizedError,
-} = require("../expressError");
-const fs = require("fs")
+const fs = require("fs");
+
+import { distrokidParser } from './helpers/parsers'
 
 /** Functions for distrokid. */
 
@@ -95,7 +92,8 @@ class Distrokid {
             }
 
             await Promise.all(allQueries);
-            console.log(`The Distrokid data has been saved! ${count} lines processed.`);
+            let response = `The Distrokid data has been saved! ${count} lines processed.`
+            return response;
         }
         
         

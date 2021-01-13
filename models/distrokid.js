@@ -11,8 +11,11 @@ const fs = require("fs")
 class Distrokid {
 
     //parse the raw data from the user
-    static async processRawInput({ page }) {
-        fs.writeFile('distrokid.txt', page, 'utf8');
+    static async processRawImport({ page }) {
+        fs.writeFile('distrokid.txt', page, 'utf8', (err) => {
+            if(err) throw err;
+            console.log('The file has been saved!');
+        });
     }
 }
 

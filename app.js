@@ -1,3 +1,4 @@
+"use strict";
 
 /** Express app for stream-stats */
 

@@ -1,3 +1,5 @@
+"use strict";
+
 /** Database setup for stream-stats */
 
 const { Client } = require("pg");

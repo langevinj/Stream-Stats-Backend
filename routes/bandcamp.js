@@ -1,3 +1,4 @@
+"use strict";
 
 /** Routes for Bandcamp*/
 const express = require("express");

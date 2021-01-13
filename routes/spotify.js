@@ -1,3 +1,4 @@
+"use strict"
 
 /** Routes for Spotify */
 const express = require("express");

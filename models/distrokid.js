@@ -48,7 +48,6 @@ class Distrokid {
                 let tempObj = { "reportingMonth": t[0], "saleMonth": t[1], "store": t[2], "title": t[4], "quantity": t[5], "releaseType": t[6], "paid": t[7], "saleCountry": t[8], "earnings": t[9] }
                 fullData.push(tempObj)
             }
-
             await insertIntoDB(fullData);
         }
         
@@ -63,29 +62,33 @@ class Distrokid {
 
         async function insertIntoDB(data){
             let allQueries = []
-            for(let dataset in data){
-                const result = db.query(
-                    `INSERT INTO distrokid
+            let count = 0;
+            for(let dataset of data){
+                if(dataset.earnings !== undefined){
+                    let result = await db.query(
+                        `INSERT INTO distrokid
                     (username, reporting_month, sale_month, store, title, quantity, release_type, paid, sale_country, earnings)
                     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-                    [
-                        username,
-                        dataset.reportingMonth,
-                        dataset.saleMonth,
-                        dataset.store,
-                        dataset.title,
-                        praseInt(dataset.quantity),
-                        dataset.releaseType,
-                        dataset.paid,
-                        dataset.saleCountry,
-                        parseFloat(dataset.earnings.substring(1))
-                    ],
-                );
-                allQueries.push(result);
+                        [
+                            username,
+                            dataset.reportingMonth,
+                            dataset.saleMonth,
+                            dataset.store,
+                            dataset.title,
+                            parseInt(dataset.quantity),
+                            dataset.releaseType,
+                            dataset.paid,
+                            dataset.saleCountry,
+                            parseFloat(dataset.earnings.substring(1))
+                        ],
+                    );
+                    count++;
+                    allQueries.push(result);
+                }
             }
 
             await Promise.all(allQueries);
-            console.log("The Distrokid data has been saved!");
+            console.log(`The Distrokid data has been saved! ${count} lines processed.`);
         }
         
         

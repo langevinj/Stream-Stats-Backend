@@ -19,7 +19,7 @@ class Distrokid {
             console.log('The file has been saved!');
         });
         let rawArray = []
-        await fs.readFile('./distrokid.txt', function (err, data) {
+        await fs.readFile('./rawPages/distrokid.txt', function (err, data) {
             if (err) throw err;
             rawArray = data.toString().split("\n");
             // console.log(array[400])

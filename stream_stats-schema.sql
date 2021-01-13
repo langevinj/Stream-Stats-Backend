@@ -20,5 +20,6 @@ CREATE TABLE distrokid (
     release_type TEXT NOT NULL,
     paid TEXT,
     sale_country TEXT NOT NULL,
-    earnings NUMERIC
+    earnings NUMERIC,
+    PRIMARY KEY username
 );

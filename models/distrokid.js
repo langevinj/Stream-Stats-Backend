@@ -14,7 +14,7 @@ class Distrokid {
 
     //parse the raw data from the user
     static async processRawImport({ page, username }) {
-        await fs.writeFile('distrokid.txt', page, 'utf8', (err) => {
+        await fs.writeFile('./rawPages/distrokid.txt', page, 'utf8', (err) => {
             if(err) throw err;
             console.log('The file has been saved!');
         });

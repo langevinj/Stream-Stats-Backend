@@ -8,3 +8,17 @@ CREATE TABLE users (
     is_admin BOOLEAN NOT NULL DEFAULT FALSE,
     band_name TEXT
 );
+
+CREATE TABLE distrokid (
+    username VARCHAR(25) 
+        REFERENCES users ON DELETE CASCADE,
+    reporting_month TEXT NOT NULL,
+    sale_month TEXT NOT NULL,
+    store TEXT NOT NULL,
+    title TEXT NOT NULL,
+    quantity INTEGER,
+    release_type TEXT NOT NULL,
+    paid TEXT,
+    sale_country TEXT NOT NULL,
+    earnings NUMERIC
+);

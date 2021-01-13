@@ -10,8 +10,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE distrokid (
-    username VARCHAR(25) 
-        REFERENCES users ON DELETE CASCADE,
+    id SERIAL PRIMARY KEY,
     reporting_month TEXT NOT NULL,
     sale_month TEXT NOT NULL,
     store TEXT NOT NULL,
@@ -21,5 +20,6 @@ CREATE TABLE distrokid (
     paid TEXT,
     sale_country TEXT NOT NULL,
     earnings NUMERIC,
-    PRIMARY KEY username
+    username VARCHAR(25) 
+        REFERENCES users ON DELETE CASCADE
 );

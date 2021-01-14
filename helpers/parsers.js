@@ -1,49 +1,46 @@
+
 const fs = require("fs");
 
+//turns each row into a valid object, returns an array containing all rows
+function formatDistrokidData(array){
+    return array.map(row => {
+        let t = row.split('\t');
+        return { "reportingMonth": t[0], "saleMonth": t[1], "store": t[2], "title": t[4], "quantity": t[5], "releaseType": t[6], "paid": t[7], "saleCountry": t[8], "earnings": t[9] }
+    });
+}
+
 //helper function for parsing a raw distrokid page
-async function distrokidParser(rawData){   
+async function distrokidParser(rawData){  
+    //helper function for finding start of the dataset
+    function checkForTableStart(line) {
+        return line.includes('REPORTING MONTH');
+    }
+
+    //helper function for finding end of the dataset
+    function checkForTableEnd(line) {
+        return line.includes('Some info about earnings');
+    }
+
     //write a new .txt file for the raw data
     await fs.writeFile(`./rawPages/distrokid.txt`, rawData, 'utf8', (err) => {
         if (err) throw err;
     });
 
-    let formattedArray = [];
-    //read the file in as an array line by line
-    await fs.readFile('./rawPages/distrokid.txt', function (err, data) {
-        if (err) throw err;
+    //read in the data from the file that was written
+    const rawContent = fs.readFileSync('./rawPages/distrokid.txt', 'utf8');
 
-        //trim extra '100% of team' on each line
-        const rawArray = data.toString().split("\n").filter(line => !line.includes("100% of team"));
-        
-    });
+    //create an array where each line is a new element and remove non-important text
+    let rawArray = rawContent.toString().split("\n").filter(line => !line.includes("100% of team"));
 
+    //remove the start of the page
+    let startIdx = rawArray.findIndex(checkForTableStart);
+    rawArray.splice(0, startIdx + 1);
+
+    //remove the end of the page
+    let endIdx = rawArray.findIndex(checkForTableEnd);
+    rawArray.splice(endIdx);
+
+    return formatDistrokidData(rawArray)
 }
 
-//helper function for writing a given set of rawData to a .txt file
-// async function writeFile(rawData, title){
-//     await fs.writeFile(`./rawPages/${title}`, rawData, 'utf8', (err) => {
-//         if (err){
-//             throw err;
-//         } else {
-//             return 1
-//         }
-//     });
-// }
-// 
-
-async function testRead(){
-    let rawArray = [];
-    await fs.readFile('../rawPages/distrokid.txt', function (err, data) {
-        if (err) throw err;
-        rawArray = data.toString().split("\n").filter(line => !line.includes("100% of team")
-        );
-    });
-    
-}
-
-
-let res = testRead();
-res.then((value) => {
-    console.log(value)
-})
-// export default distrokidParser
+module.exports =  { distrokidParser }

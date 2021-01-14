@@ -3,7 +3,7 @@
 const db = require("../db");
 const fs = require("fs");
 
-import { distrokidParser } from './helpers/parsers'
+const { distrokidParser } = require('../helpers/parsers') 
 
 /** Functions for distrokid. */
 
@@ -11,58 +11,18 @@ class Distrokid {
 
     //parse the raw data from the user
     static async processRawImport({ page, username }) {
-        await fs.writeFile('./rawPages/distrokid.txt', page, 'utf8', (err) => {
-            if(err) throw err;
-            console.log('The file has been saved!');
-        });
-        let rawArray = []
-        await fs.readFile('./rawPages/distrokid.txt', function (err, data) {
-            if (err) throw err;
-            rawArray = data.toString().split("\n");
-            // console.log(array[400])
-            // for (let i of array) {
-            //     console.log(i);
-            // }
-            filterFurther(rawArray);
-        });
 
-        let filter1;
-        let fullData = [];
-        //remove the start and end of the page
-        async function filterFurther(arr){
-            filter1 = arr.filter(line => !line.includes("100% of team"));
-            let startIndex = filter1.findIndex(checkForTableStart);
-            
-            //remove the start of the table
-            filter1.splice(0, startIndex + 1);
+        /**call helper function to format all the data
+         *      returns array of objects containing each dataset
+        */
+        let formattedArray = await distrokidParser(page);
 
-            let endIndex = filter1.findIndex(checkForTableEnd);
+        await insertIntoDB(formattedArray);
 
-            //remove the end of the page
-            filter1.splice(endIndex, filter1.length - 1);
-
-            for (let row of filter1) {
-                //split the row by breaks
-                let t = row.split('\t');
-                let tempObj = { "reportingMonth": t[0], "saleMonth": t[1], "store": t[2], "title": t[4], "quantity": t[5], "releaseType": t[6], "paid": t[7], "saleCountry": t[8], "earnings": t[9] }
-                fullData.push(tempObj)
-            }
-            await insertIntoDB(fullData);
-        }
-        
-        //this whole filtering process should be cleaned up for time complexity reasons
-        function checkForTableStart(line){
-            return line.includes('REPORTING MONTH');
-        }
-
-        function checkForTableEnd(line){
-            return line.includes('Some info about earnings');
-        }
-
-        async function insertIntoDB(data){
+        async function insertIntoDB(formattedArray){
             let allQueries = []
             let count = 0;
-            for(let dataset of data){
+            for(let dataset of formattedArray){
                 try{
                     if(dataset.earnings !== undefined){
                         let result = db.query(

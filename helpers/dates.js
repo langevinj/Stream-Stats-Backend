@@ -21,13 +21,14 @@ function monthInt(s){
     if(s === 'Dec' || s === 'December') return 12;
 }
 
-//given a string date as provided by distrokid, return a valid date object
+//given a string date as provided by distrokid, return a valid date string for SQL
 function distrokidDateConverter(dateString){
     let dateSplit = dateString.split(" ");
     let month = monthInt(dateSplit[0]);
     let daysInMonth = getDaysInMonth(month, parseInt(dateSplit[1]));
 
-    return new Date(`${daysInMonth} ${dateSplit[0]} ${dateSplit[1]}`);
+    let tempDate = new Date(`${daysInMonth} ${dateSplit[0]} ${dateSplit[1]}`);
+    return tempDate.toISOString().split('T')[0];
 }
 
 module.exports = { distrokidDateConverter }

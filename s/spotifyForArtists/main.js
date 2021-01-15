@@ -36,6 +36,8 @@ async function crawlSFA({ email, password, username } ) {
         page.waitForSelector('tr[data-testid="sort-table-body-row"]')
     ]);
 
+    await page.select('#dropdown-toggle', 'Last 28 days');
+
     //get data about streams from the browser
     const data = await page.$$eval('tr[data-testid="sort-table-body-row"]', $song => {
         const scrapedData = [];

@@ -11,8 +11,8 @@ CREATE TABLE users (
 
 CREATE TABLE distrokid (
     id SERIAL PRIMARY KEY,
-    reporting_month TEXT NOT NULL,
-    sale_month TEXT NOT NULL,
+    reporting_month DATE NOT NULL,
+    sale_month DATE NOT NULL,
     store TEXT NOT NULL,
     title TEXT NOT NULL,
     quantity INTEGER,

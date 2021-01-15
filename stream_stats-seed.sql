@@ -8,4 +8,4 @@ VALUES('testuser',
         FALSE);
 
 INSERT INTO distrokid (username, reporting_month, sale_month, store, title, quantity, release_type, paid, sale_country, earnings)
-VALUES('testuser', 'Mar 2020', 'Feb 2020', 'Apple Music', 'Test Track', 130, 'Song', 'n/a', 'US', 0.00456963323);
+VALUES('testuser', '20 Mar 2020', '28 Feb 2020', 'Apple Music', 'Test Track', 130, 'Song', 'n/a', 'US', 0.00456963323);

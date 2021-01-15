@@ -6,7 +6,7 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
 const spotifyCredentialsSchema = require("../schemas/spotifyCredentials.json");
-const Spotify = require("../models/distrokid");
+const Spotify = require("../models/spotify");
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ const router = express.Router();
  * save a users username and password for Spotify for artists
  */
 
-router.post("/saveCredentials", async function (req, res, next) {
+router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) {
     try {
         const validator = jsonschema.validate(req.body, spotifyCredentialsSchema);
         if (!validator.valid) {

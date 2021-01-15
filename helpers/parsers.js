@@ -18,7 +18,7 @@ function formatDistrokidData(array){
 }
 
 //helper function for parsing a raw distrokid page
-async function distrokidParser(rawData){  
+async function distrokidParser(rawData, username){  
     //helper function for finding start of the dataset
     function checkForTableStart(line) {
         return line.includes('REPORTING MONTH');
@@ -30,12 +30,12 @@ async function distrokidParser(rawData){
     }
 
     //write a new .txt file for the raw data
-    await fs.writeFile(`./rawPages/distrokid.txt`, rawData, 'utf8', (err) => {
+    await fs.writeFile(`./rawPages/distrokid-${username}.txt`, rawData, 'utf8', (err) => {
         if (err) throw err;
     });
 
     //read in the data from the file that was written
-    const rawContent = fs.readFileSync('./rawPages/distrokid.txt', 'utf8');
+    const rawContent = fs.readFileSync(`./rawPages/distrokid-${username}.txt`, 'utf8');
 
     //create an array where each line is a new element and remove non-important text
     let rawArray = rawContent.toString().split("\n").filter(line => !line.includes("100% of team"));
@@ -51,4 +51,12 @@ async function distrokidParser(rawData){
     return formatDistrokidData(rawArray)
 }
 
-module.exports =  { distrokidParser }
+//helper function for parsing a raw bandcamp page
+async function bandcampParser(rawData, username){
+    //write a new .txt file for the raw data
+    await fs.writeFile(`./rawPages/bandcamp-${username}.txt`, rawData, 'utf8', (err) => {
+        if (err) throw err;
+    });
+}
+
+module.exports =  { distrokidParser, bandcampParser }

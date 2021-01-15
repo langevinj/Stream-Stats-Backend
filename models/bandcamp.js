@@ -15,7 +15,7 @@ class Bandcamp {
         /**call helper function to format all the data
          *      returns array of objects containing each dataset
         */
-        let formattedArray = await bandcampParser(page);
+        let formattedArray = await bandcampParser(page, username);
         console.log(formattedArray);
     }
 }

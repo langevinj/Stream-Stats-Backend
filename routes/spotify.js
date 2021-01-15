@@ -29,4 +29,20 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
     }
 });
 
+/** POST /gatherData
+ *  {username}
+ *      crawls Spotify for artists webpage and saves data to DB
+ */
+
+ router.post("/gatherData", ensureLoggedIn, async function (req, res, next) {
+     try {
+         const response = Spotify.crawlAndSave(req.body);
+         return res.json({ response });
+     } catch (err) {
+         return next(err);
+     }
+});
+
+
+
 module.exports = router;

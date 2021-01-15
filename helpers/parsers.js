@@ -1,11 +1,17 @@
 
 const fs = require("fs");
+const { distrokidDateConverter } = require('./dates');
 
 //turns each row into a valid object, returns an array containing all rows
 function formatDistrokidData(array){
     return array.map(row => {
         let t = row.split('\t');
-        return { "reportingMonth": t[0], "saleMonth": t[1], "store": t[2], "title": t[4], "quantity": t[5], "releaseType": t[6], "paid": t[7], "saleCountry": t[8], "earnings": t[9] }
+
+        //converter the dates into the correct format for SQL insertion
+        let validReportingMonth = distrokidDateConverter(t[0]);
+        let validSaleMonth = distrokidDateConverter(t[1]);
+
+        return { "reportingMonth": validReportingMonth, "saleMonth": validSaleMonth, "store": t[2], "title": t[4], "quantity": t[5], "releaseType": t[6], "paid": t[7], "saleCountry": t[8], "earnings": t[9] }
     });
 }
 

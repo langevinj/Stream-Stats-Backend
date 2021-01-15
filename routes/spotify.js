@@ -5,7 +5,7 @@ const jsonschema = require("jsonschema");
 
 const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
-const spotifyCredentialsSchema = require("../schemas/spotifyCredentialsSchema.json");
+const spotifyCredentialsSchema = require("../schemas/spotifyCredentials.json");
 const Spotify = require("../models/distrokid");
 
 const router = express.Router();

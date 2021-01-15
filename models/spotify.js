@@ -30,16 +30,16 @@ class Spotify {
         return user;
     }
 
-    static async crawlAndSave({ username }){
+    static async crawlAndSave({ username, email, password }){
         //get the email and hashedPassword for the specified user
-        const res = await db.query(
-            `SELECT email, password
-            FROM spotify_credentials
-            WHERE username=$1`, [username]
-        );
+        // const res = await db.query(
+        //     `SELECT email, password
+        //     FROM spotify_credentials
+        //     WHERE username=$1`, [username]
+        // );
 
-        let password = res.rows[1].password;
-        let email = res.rows[0].email;
+        // let password = res.rows[1].password;
+        // let email = res.rows[0].email;
 
         //when security is added will have to decrypt password here
         // let unhashedPwd =

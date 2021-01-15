@@ -2,8 +2,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-async function crawlSFA(email, password, username) {
-
+async function crawlSFA({ email, password, username } ) {
     //institute a new browser instance
     const browser = await puppeteer.launch({
         headless: false
@@ -12,7 +11,7 @@ async function crawlSFA(email, password, username) {
     const page = await browser.newPage();
     //go to the spotify for artists login page
     await page.goto('https://accounts.spotify.com/en/login?continue=https:%2F%2Fartists.spotify.com%2F');
-
+    console.log(email, password)
     //login the user
     await page.type('#login-username', email);
     await page.type('#login-password', password);
@@ -24,16 +23,16 @@ async function crawlSFA(email, password, username) {
     ]);
 
     //find the correct url to visit for stats
-    const statsNav = await page.$eval('a[href*="/music/songs"]', $link => {
-        const scrapedLink = [];
+    // const statsNav = await page.$eval('a[href*="/music/songs"]', $link => {
+    //     const scrapedLink = [];
 
-        scrapedLink.push($link.href)
-        return scrapedLink
-    });
+    //     scrapedLink.push($link.href)
+    //     return scrapedLink
+    // });
     
     //go to stats page, currently set to have the filter be past 28days
     await Promise.all([
-        await page.goto(`${statsNav[0]}?time-filter=28day`),
+        await page.click(`a[href*="/music/songs"]`),
         page.waitForSelector('tr[data-testid="sort-table-body-row"]')
     ]);
 
@@ -54,7 +53,7 @@ async function crawlSFA(email, password, username) {
     });
 
     //write scraped data to a JSON file, if there is an error log it
-    await fs.writeFile(`./spotify-${username}.json`, JSON.stringify(data), err => err ? console.log(err): null);
+    await fs.writeFile(`spotify-${username}.json`, JSON.stringify(data), err => err ? console.log(err): null);
 
     browser.close();
 }

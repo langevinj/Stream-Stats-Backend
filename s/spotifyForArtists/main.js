@@ -50,10 +50,10 @@ async function crawlSFA({ email, password, username } ) {
 
         return scrapedData;
     });
-
+    
     await page.waitForTimeout(1000);
     //write scraped data to a JSON file, if there is an error log it
-    await fs.writeFile(`spotifyData/spotify-${username}-30days.json`, JSON.stringify(data), err => err ? console.log(err): null);
+    await fs.writeFile(`/spotifyData/spotify-${username}-30days.json`, JSON.stringify(data), {flag: "w" }, err => err ? console.log(err): null);
 
     await page.waitForTimeout(1000);
     console.log(filteredUrl)

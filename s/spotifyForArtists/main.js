@@ -22,35 +22,20 @@ async function crawlSFA({ email, password, username } ) {
         page.click('#login-button'),
         page.waitForNavigation({ waitUntil: 'networkidle2' })
     ]);
-
-    //find the correct url to visit for stats
-    // const statsNav = await page.$eval('a[href*="/music/songs"]', $link => {
-    //     const scrapedLink = [];
-
-    //     scrapedLink.push($link.href)
-    //     return scrapedLink
-    // });
     
-    //go to stats page, currently set to have the filter be past 28days
-    // await Promise.all([
-    //     page.click(`a[href*="/music/songs"]`),
-    //     page.waitForSelector('tr[data-testid="sort-table-body-row"]')
-    // ]);
     await page.waitForTimeout(3000)
 
     //format the url properly to go to the correctly filtered page
     let filterIdx = page.url().search('home');
     let filteredUrl = page.url().substring(0, filterIdx);
 
+    //navigate to stats page for last 28days
     await Promise.all([
         page.goto(`${filteredUrl}music/songs?time-filter=28day`),
         page.waitForSelector('tr[data-testid="sort-table-body-row"]')
     ]);
 
-    console.log("MAde it to  url")
-    
-
-    //get data about streams from the browser
+    //get data about past 28 days streams from the browser
     const data = await page.$$eval('tr[data-testid="sort-table-body-row"]', $song => {
         const scrapedData = [];
 
@@ -66,10 +51,37 @@ async function crawlSFA({ email, password, username } ) {
         return scrapedData;
     });
 
+    await page.waitForTimeout(1000);
     //write scraped data to a JSON file, if there is an error log it
-    await fs.writeFile(`spotify-${username}.json`, JSON.stringify(data), err => err ? console.log(err): null);
+    await fs.writeFile(`spotifyData/spotify-${username}-30days.json`, JSON.stringify(data), err => err ? console.log(err): null);
 
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(1000);
+    console.log(filteredUrl)
+    //visit all time stats
+    await Promise.all([
+        page.goto(`${filteredUrl}music/songs?time-filter=all`),
+        page.waitForSelector('tr[data-testid="sort-table-body-row"]')
+    ]);
+
+    const allData = await page.$$eval('tr[data-testid="sort-table-body-row"]', $song => {
+        const scrapedData = [];
+
+        $song.forEach(function ($song) {
+            scrapedData.push({
+                title: $song.querySelector('span[class*="Title').innerText,
+                streams: $song.childNodes[3].title,
+                listeners: $song.childNodes[4].title
+            });
+            return
+        });
+
+        return scrapedData;
+    });
+
+    //write scraped data to a JSON file, if there is an error log it
+    await fs.writeFile(`./spotify-${username}-allTime.json`, JSON.stringify(allData), err => err ? console.log(err) : null);
+
+    await page.waitForTimeout(1000);
 
     browser.close();
 }

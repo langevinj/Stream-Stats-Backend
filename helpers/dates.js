@@ -30,5 +30,4 @@ function distrokidDateConverter(dateString){
     return new Date(`${daysInMonth} ${dateSplit[0]} ${dateSplit[1]}`);
 }
 
-let res = distrokidDateConverter('Feb 2021');
-console.log(res);
+module.exports = { distrokidDateConverter }

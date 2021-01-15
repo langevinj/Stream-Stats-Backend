@@ -2,7 +2,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-async function crawlSFA({ email, password }) {
+async function crawlSFA(email, password, username) {
 
     //institute a new browser instance
     const browser = await puppeteer.launch({

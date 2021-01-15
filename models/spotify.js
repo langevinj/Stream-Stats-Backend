@@ -2,6 +2,7 @@
 
 const db = require("../db");
 const bcrypt = require("bcrypt");
+const { crawlSFA } = require("./s/spotifyForArtists/main");
 
 const { BCRYPT_WORK_FACTOR } = require ("../config.js");
 /** Functions for Spotify */
@@ -26,6 +27,26 @@ class Spotify {
         const user = result.rows[0];
 
         return user;
+    }
+
+    static async crawlAndSave({ username }){
+        //get the email and hashedPassword for the specified user
+        const res = await db.query(
+            `SELECT email, password
+            FROM spotify_credentials
+            WHERE username=$1`, [username]
+        );
+
+        let pwd = res.rows[1];
+        let email = res.rows[0];
+
+        //when security is added will have to decrypt password here
+        // let unhashedPwd =
+        
+        //initiate the crawl
+        let res = await crawlSFA(email, pwd, username);
+
+
     }
 }
 

@@ -12,7 +12,8 @@ class Spotify {
 
     /**Save a users Spotify credentials */
     static async saveUserCredentials({ email, password, username }){
-        const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+        //revisit hasing password when know how to decrypt
+        // const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
         const result = await db.query(
             `INSERT INTO spotify_credentials
             (email, password, username)
@@ -20,7 +21,7 @@ class Spotify {
             RETURNING username`, 
             [
                 email,
-                hashedPassword,
+                password,
                 username
             ],
         );

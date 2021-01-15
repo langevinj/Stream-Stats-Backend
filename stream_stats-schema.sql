@@ -23,3 +23,12 @@ CREATE TABLE distrokid (
     username VARCHAR(25) 
         REFERENCES users ON DELETE CASCADE
 );
+
+CREATE TABLE spotify_credentials (
+    id SERIAL PRIMARY KEY,
+    email TEXT NOT NULL
+        CHECK (position('@' IN email) > 1),
+    password TEXT NOT NULL,
+    username VARCHAR(25) 
+        REFERENCES users ON DELETE CASCADE
+);

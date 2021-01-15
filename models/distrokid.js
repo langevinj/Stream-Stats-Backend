@@ -53,6 +53,7 @@ class Distrokid {
 
             await Promise.all(allQueries);
             let response = `The Distrokid data has been saved! ${count} lines processed.`
+            console.log(response)
             return response;
         }
         

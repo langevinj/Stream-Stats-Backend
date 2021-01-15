@@ -6,6 +6,8 @@ const { distrokidDateConverter } = require('./dates');
 function formatDistrokidData(array){
     return array.map(row => {
         let t = row.split('\t');
+        
+        if(t.length < 6) return t;
 
         //converter the dates into the correct format for SQL insertion
         let validReportingMonth = distrokidDateConverter(t[0]);

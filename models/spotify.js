@@ -46,8 +46,51 @@ class Spotify {
         
         //initiate the crawl
         let crawlRes = await crawlSFA({ email, password, username });
+        //parse the returned data
+        let data = JSON.parse(crawlRes);
+        let monthData = data['30days'];
+        let allTimeData = data ['alltime'];
 
+        let allMonthQueries = [];
+        //enter the past 28days data into the DB
+        for(let dataset of monthData){
+            try {
+                let result = db.query(
+                    `INSERT INTO spotify_running
+                    (title, streams, listeners, username)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING username`, [dataset.title, parsetInt(dataset.streams), parseInt(dataset.listeners), username]
+                );
+                allMonthQueries.push(result);
+            } catch (err) {
+                throw new Error("Error importing data.");
+            }
+        }
 
+        //wait for the month queries to finish
+        await Promise.all(allMonthQueries);
+
+        let allTimeQueries = [];
+        //enter the alltime data
+        for(let dataset of allTimeData) {
+            try {
+                let result = db.query(
+                    `INSERT INTO spotify_running
+                    (title, streams, listeners, username)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING username`, [dataset.title, parsetInt(dataset.streams), parseInt(dataset.listeners), username]
+                );
+                allTimeQueries.push(result);
+            } catch (err) {
+                throw new Error("Error importing data.");
+            }
+        }
+        //wait for all queries to complete
+        await Promise.all(allTimeQueries);
+
+        let response = `The Spotify data has been saved!`
+        console.log(response);
+        return response;
     }
 }
 

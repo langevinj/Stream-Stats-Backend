@@ -30,7 +30,7 @@ async function distrokidParser(rawData, username){
     }
 
     //write a new .txt file for the raw data
-    await fs.writeFile(`./rawPages/distrokid-${username}.txt`, rawData, 'utf8', (err) => {
+    await fs.writeFile(`./rawPages/distrokid-${username}.txt`, rawData, {'encoding': 'utf8', 'flag': 'w'}, (err) => {
         if (err) throw err;
     });
 
@@ -53,10 +53,67 @@ async function distrokidParser(rawData, username){
 
 //helper function for parsing a raw bandcamp page
 async function bandcampParser(rawData, username){
+    //helper function for finding start of the dataset  
+    function checkForTableStart(line){
+        return line.includes('Total plays');
+    }
+
+    //helper function for finding end of the dataset
+    function checkForTableEnd(line){
+        return line.includes('play means the track was played');
+    }
+
     //write a new .txt file for the raw data
-    await fs.writeFile(`./rawPages/bandcamp-${username}.txt`, rawData, 'utf8', (err) => {
+    await fs.writeFile(`./rawPages/bandcamp-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
         if (err) throw err;
     });
+
+    //read in the data from the file that was written
+    const rawContent = fs.readFileSync(`./rawPages/bandcamp-${username}.txt`, 'utf8');
+
+    //create an array where each line is a new element
+    let rawArray = rawContent.toString().split("\n");
+    //remove the start of the page
+
+    let startIdx = rawArray.findIndex(checkForTableStart);
+    rawArray.splice(0, startIdx + 3);
+
+    //remove the end of the page
+    let endIdx = rawArray.findIndex(checkForTableEnd);
+    rawArray.splice(endIdx);
+
+    /**trim the raw array down to an array containing strings for each track
+     *          each string contains, track title, total streams, complete, partial, and skip stats
+     * */
+    let justTracks = [];
+    let count = 0;
+    let idx = 0;
+    while(idx < rawArray.length){
+        if(count === 0){
+            count++;
+        } else if (count === 1){
+            justTracks.push(rawArray[idx] + rawArray[idx + 1]);
+            count++;
+        } else if (count === 3) {
+            count = 0;
+        } else {
+            count++;
+        }
+        idx++;
+    }
+
+    let formattedData = [];
+    //format the data for each song into an array of objects 
+    for(let el of justTracks){
+        let temp = el.split("\t").filter(Boolean);
+
+        //create an object for the track entry
+        let tempObject = { "title": temp[0], "plays": parseInt(temp[1]), "complete": parseInt(temp[2]), "partial": parseInt(temp[3]), "skip": parseInt(temp[4])}
+
+        formattedData.push(tempObject);
+    }
+
+    return formattedData
 }
 
 module.exports =  { distrokidParser, bandcampParser }

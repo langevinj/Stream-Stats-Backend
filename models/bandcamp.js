@@ -16,7 +16,12 @@ class Bandcamp {
          *      returns array of objects containing each dataset
         */
         let formattedArray = await bandcampParser(page, username);
-        console.log(formattedArray);
+        if(formattedArray){
+            for (let el of formattedArray) {
+                console.log(el);
+            }
+        }
+        
     }
 }
 

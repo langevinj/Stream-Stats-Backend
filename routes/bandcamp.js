@@ -2,7 +2,7 @@
 
 /** Routes for Bandcamp*/
 const express = require("express");
-const { ensureLoggedIn } = require("../middleware/auth");
+const { ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const Bandcamp = require("../models/bandcamp");
 const { decodeToken } = require("../helpers/tokens");
 
@@ -11,12 +11,12 @@ const router = express.Router();
 /** POST /rawImport { page } => { response }
  *          take raw page data from the user, parse and save data to the DB
  *
- * Authorization required: logged in
+ * Authorization required: correct user or admin
   */
 
-router.post("/rawImport", ensureLoggedIn, async function (req, res, next) {
+router.post("/rawImport/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
     try {
-        const response = await Bandcamp.processRawImport(req.body.page, decodeToken(req).username);
+        const response = await Bandcamp.processRawImport(req.body.page, req.params.username);
         return res.status(201).json({ response });
     } catch (err) {
         return next(err);

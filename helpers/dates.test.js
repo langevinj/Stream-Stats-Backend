@@ -24,3 +24,11 @@ describe("monthInt", function(){
         expect(monthInt("Feb")).not.toEqual(10);
     });
 });
+
+describe("distrokidDateConverter", function() {
+    it("converts a distrokid provided date into a valid date string for SQL", function() {
+        expect(distrokidDateConverter("Feb 2020")).toEqual("2020-02-29");
+        expect(distrokidDateConverter("Feb 2021")).toEqual("2021-02-28");
+        expect(distrokidDateConverter("Nov 2016")).toEqual("2016-11-30");
+    });
+});

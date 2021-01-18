@@ -14,3 +14,13 @@ describe("getDaysInMonth", function(){
         expect(getDaysInMonth(2, 2296)).toBe(29);
     });
 });
+
+describe("monthInt", function(){
+    it("should return the correct integer for a month given a string representation", function(){
+        expect(monthInt("January")).toEqual(1);
+        expect(monthInt("Feb")).toEqual(2);
+        expect(monthInt("Sept")).toEqual(9);
+        expect(monthInt("December")).toEqual(12);
+        expect(monthInt("Feb")).not.toEqual(10);
+    });
+});

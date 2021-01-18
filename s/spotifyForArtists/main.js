@@ -1,16 +1,24 @@
+'use strict'
+
 //crawler for Spotify for artists
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const { response } = require('express');
 
 async function crawlSFA({ email, password, username } ) {
+
+    // try {
     //institute a new browser instance
     const browser = await puppeteer.launch({
-        headless: true,
-        slowMo: 10
+        headless: false,
+        slowMo: 25,
+        stealth: true
     });
 
     const page = await browser.newPage();
+
+    // await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36');
+
     //go to the spotify for artists login page
     await page.goto('https://accounts.spotify.com/en/login?continue=https:%2F%2Fartists.spotify.com%2F');
 
@@ -23,18 +31,25 @@ async function crawlSFA({ email, password, username } ) {
         page.click('#login-button'),
         page.waitForNavigation({ waitUntil: 'networkidle2' })
     ]);
-    
-    await page.waitForTimeout(2000)
+
+    page.waitForTimeout(3000);
 
     //format the url properly to go to the correctly filtered page
-    let filterIdx = page.url().search('home');
-    let filteredUrl = page.url().substring(0, filterIdx);
+    let filterIdx = await page.url().search('home');
+    let filteredUrl = await page.url().substring(0, filterIdx);
 
-    //navigate to stats page for last 28days
+    await page.waitForTimeout(2000);
+    page.goto(`${filteredUrl}music/songs?time-filter=28days`);
+
+    await page.waitForTimeout(5000);
+    browser.close();
+    // navigate to stats page for last 28days
     await Promise.all([
-        page.goto(`${filteredUrl}music/songs?time-filter=28day`),
+        page.goto(`${filteredUrl}music/songs?time-filter=28days`),
         page.waitForSelector('tr[data-testid="sort-table-body-row"]')
     ]);
+
+    await page.waitForTimeout(1000)
 
     //get data about past 28 days streams from the browser
     const data = await page.$$eval('tr[data-testid="sort-table-body-row"]', $song => {
@@ -87,8 +102,12 @@ async function crawlSFA({ email, password, username } ) {
     await page.waitForTimeout(1000);
     let respData = { "30days": data, "allTime": allData }
 
+    await page.waitForTimeout(100);
     browser.close();
     return JSON.stringify(respData);
+// } catch (err) {
+//     console.log(err)
+// }
 }
 
 module.exports = { crawlSFA };

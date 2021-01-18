@@ -24,7 +24,7 @@ async function crawlSFA({ email, password, username } ) {
         page.waitForNavigation({ waitUntil: 'networkidle2' })
     ]);
     
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
     //format the url properly to go to the correctly filtered page
     let filterIdx = page.url().search('home');
@@ -52,12 +52,12 @@ async function crawlSFA({ email, password, username } ) {
         return scrapedData;
     });
     
-    await page.waitForTimeout(1000);
+    // await page.waitForTimeout(1000);
     //write scraped data to a JSON file, if there is an error log it
-    await fs.writeFile(`./spotifyData/spotify-${username}-30days.json`, JSON.stringify(data), {flag: "w" }, err => err ? console.log(err): null);
-    console.log("30day stats written");
+    // await fs.writeFile(`./spotifyData/spotify-${username}-30days.json`, JSON.stringify(data), {flag: "w" }, err => err ? console.log(err): null);
+    // console.log("30day stats written");
 
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
     //visit all time stats
     await Promise.all([
@@ -81,8 +81,8 @@ async function crawlSFA({ email, password, username } ) {
     });
 
     //write scraped data to a JSON file, if there is an error log it
-    await fs.writeFile(`./spotifyData/spotify-${username}-allTime.json`, JSON.stringify(allData), err => err ? console.log(err) : null);
-    console.log("All-time stats written");
+    // await fs.writeFile(`./spotifyData/spotify-${username}-allTime.json`, JSON.stringify(allData), err => err ? console.log(err) : null);
+    // console.log("All-time stats written");
 
     await page.waitForTimeout(1000);
     let respData = { "30days": data, "allTime": allData }

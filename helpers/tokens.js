@@ -15,4 +15,11 @@ function createToken(user) {
     return jwt.sign(payload, SECRET_KEY);
 }
 
-module.exports = { createToken };
+function decodeToken(req) {
+    const authHeader = req.headers && req.headers.authorization
+    const token = authHeader.replace(/^[Bb]earer /, "").trim();
+    const username = jwt.decode(token);
+    return username;
+}
+
+module.exports = { createToken, decodeToken };

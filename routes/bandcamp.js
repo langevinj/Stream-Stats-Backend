@@ -4,6 +4,7 @@
 const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
 const Bandcamp = require("../models/bandcamp");
+const { decodeToken } = require("../helpers/tokens");
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const router = express.Router();
 
 router.post("/rawImport", ensureLoggedIn, async function (req, res, next) {
     try {
-        const response = await Bandcamp.processRawImport(req.body);
+        const response = await Bandcamp.processRawImport(req.body.page, decodeToken(req).username);
         return res.status(201).json({ response });
     } catch (err) {
         return next(err);

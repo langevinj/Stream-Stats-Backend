@@ -31,7 +31,7 @@ class Spotify {
         return user;
     }
 
-    static async crawlAndSave({ username, email, password }){
+    static async crawlAndSave(email, password, username){
         //get the email and hashedPassword for the specified user
         // const res = await db.query(
         //     `SELECT email, password
@@ -96,7 +96,7 @@ class Spotify {
     }
 
     //parse raw page from user for the past month filter
-    static async processRawMonthImport({ page, username }) {
+    static async processRawMonthImport(page, username) {
 
         /** Call helper parser to format all the data
          *      return array of objects containing each dataset per song
@@ -130,7 +130,7 @@ class Spotify {
     }
 
     //parse raw page from user for the all time filter, insert into db
-    static async processRawAlltimeImport({ page, username }){
+    static async processRawAlltimeImport(page, username){
 
         /** Call helper parser to format all the data
          *      return array of objects containing each dataset per song

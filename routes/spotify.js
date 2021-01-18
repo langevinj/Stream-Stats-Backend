@@ -5,6 +5,7 @@ const jsonschema = require("jsonschema");
 
 const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
+const { decodeToken } = require("../helpers/tokens");
 const spotifyCredentialsSchema = require("../schemas/spotifyCredentials.json");
 const Spotify = require("../models/spotify");
 
@@ -36,7 +37,7 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
 
  router.post("/gatherData", ensureLoggedIn, async function (req, res, next) {
      try {
-         const response = Spotify.crawlAndSave(req.body);
+         const response = Spotify.crawlAndSave(req.body.email, req.body.password, decodeToken(req).username);
          return res.json({ response });
      } catch (err) {
          return next(err);
@@ -52,7 +53,7 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
 
  router.post("/rawMonthImport", ensureLoggedIn, async function(req, res, next){
      try {
-         const response = Spotify.processRawMonthImport(req.body);
+         const response = Spotify.processRawMonthImport(req.body.page, decodeToken(req).username);
          return res.json({ response });
      } catch (err) {
          return next(err);
@@ -69,7 +70,7 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
 
 router.post("/rawAlltimeImport", ensureLoggedIn, async function (req, res, next) {
     try {
-        const response = Spotify.processRawAlltimeImport(req.body);
+        const response = Spotify.processRawAlltimeImport(req.body.page, decodeToken(req).username);
         return res.json({ response });
     } catch (err) {
         return next(err);

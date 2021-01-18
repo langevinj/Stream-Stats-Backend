@@ -85,7 +85,7 @@ async function crawlSFA({ email, password, username } ) {
     console.log("All-time stats written");
 
     await page.waitForTimeout(1000);
-    let respData = { "30days": data, "alltime": allData }
+    let respData = { "30days": data, "allTime": allData }
 
     browser.close();
     return JSON.stringify(respData);

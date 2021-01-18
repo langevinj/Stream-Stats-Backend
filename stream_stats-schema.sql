@@ -22,7 +22,7 @@ CREATE TABLE distrokid (
     earnings NUMERIC,
     username VARCHAR(25) 
         REFERENCES users ON DELETE CASCADE,
-    stats_added DATETIME DEFAULT CURRENT_TIMESTAMP
+    stats_added DATE DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -43,7 +43,7 @@ CREATE TABLE spotify_all_time (
     listeners INTEGER NOT NULL DEFAULT 0,
     username VARCHAR(25) 
         REFERENCES users ON DELETE CASCADE,
-    stats_added DATETIME DEFAULT CURRENT_TIMESTAMP
+    stats_added DATE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table for past 30days and tracking
@@ -54,5 +54,5 @@ CREATE TABLE spotify_running (
     listeners INTEGER NOT NULL DEFAULT 0,
     username VARCHAR(25) 
         REFERENCES users ON DELETE CASCADE,
-    stats_added DATETIME DEFAULT CURRENT_TIMESTAMP
+    stats_added DATE DEFAULT CURRENT_TIMESTAMP
 );

@@ -21,8 +21,10 @@ CREATE TABLE distrokid (
     sale_country TEXT NOT NULL,
     earnings NUMERIC,
     username VARCHAR(25) 
-        REFERENCES users ON DELETE CASCADE
+        REFERENCES users ON DELETE CASCADE,
+    stats_added DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
 
 CREATE TABLE spotify_credentials (
     id SERIAL PRIMARY KEY,
@@ -32,3 +34,12 @@ CREATE TABLE spotify_credentials (
     username VARCHAR(25) 
         REFERENCES users ON DELETE CASCADE
 );
+
+CREATE TABLE spotify_all_time (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    streams INTEGER NOT NULL DEFAULT 0,
+    listeners INTEGER NOT NULL DEFAULT 0,
+    username VARCHAR(25) 
+        REFERENCES users ON DELETE CASCADE
+)

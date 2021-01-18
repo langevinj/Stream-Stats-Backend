@@ -15,7 +15,7 @@ class Distrokid {
         /**call helper function to format all the data
          *      returns array of objects containing each dataset
         */
-        let formattedArray = await distrokidParser(page);
+        let formattedArray = await distrokidParser(page, username);
 
         await insertIntoDB(formattedArray);
 

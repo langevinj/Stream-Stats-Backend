@@ -65,7 +65,7 @@ class Spotify {
                 allMonthQueries.push(result);
             } catch (err) {
                 throw err;
-                throw new Error("Error importing data.");
+                // throw new Error("Error importing data.");
             }
         }
 
@@ -102,6 +102,29 @@ class Spotify {
          *      return array of objects containing each dataset per song
          */
         let formattedArray = await spotifyParser(page, username);
+
+        //skipping some data for now
+        let allQueries = [];
+
+        for(let dataset of formattedArray) {
+            try {
+                let result = db.query(
+                    `INSERT INTO spotify_running
+                    (title, streams, listeners, username)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
+                );
+                allQueries.push(result);
+            } catch (err) {
+                throw err;
+            }
+        }
+
+        await Promise.all(allQueries);
+
+        let response = `The Spotify data has been saved!`
+        console.log(response);
+        return response;
     }
 }
 

@@ -71,23 +71,23 @@ class Spotify {
         //wait for the month queries to finish
         await Promise.all(allMonthQueries);
 
-        // let allTimeQueries = [];
-        // //enter the alltime data
-        // for(let dataset of allTimeData) {
-        //     try {
-        //         let result = db.query(
-        //             `INSERT INTO spotify_all_time
-        //             (title, streams, listeners, username)
-        //             VALUES ($1, $2, $3, $4)
-        //             RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
-        //         );
-        //         allTimeQueries.push(result);
-        //     } catch (err) {
-        //         throw new Error("Error importing data.");
-        //     }
-        // }
-        // //wait for all queries to complete
-        // await Promise.all(allTimeQueries);
+        let allTimeQueries = [];
+        //enter the alltime data
+        for(let dataset of allTimeData) {
+            try {
+                let result = db.query(
+                    `INSERT INTO spotify_all_time
+                    (title, streams, listeners, username)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
+                );
+                allTimeQueries.push(result);
+            } catch (err) {
+                throw new Error("Error importing data.");
+            }
+        }
+        //wait for all queries to complete
+        await Promise.all(allTimeQueries);
 
         let response = `The Spotify data has been saved!`
         console.log(response);

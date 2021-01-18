@@ -35,11 +35,24 @@ CREATE TABLE spotify_credentials (
         REFERENCES users ON DELETE CASCADE
 );
 
+-- Table for all time streams
 CREATE TABLE spotify_all_time (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     streams INTEGER NOT NULL DEFAULT 0,
     listeners INTEGER NOT NULL DEFAULT 0,
     username VARCHAR(25) 
-        REFERENCES users ON DELETE CASCADE
-)
+        REFERENCES users ON DELETE CASCADE,
+    stats_added DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table for past 30days and tracking
+CREATE TABLE spotify_running (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    streams INTEGER NOT NULL DEFAULT 0,
+    listeners INTEGER NOT NULL DEFAULT 0,
+    username VARCHAR(25) 
+        REFERENCES users ON DELETE CASCADE,
+    stats_added DATETIME DEFAULT CURRENT_TIMESTAMP
+);

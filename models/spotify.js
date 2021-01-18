@@ -105,8 +105,10 @@ class Spotify {
 
         //skipping some data for now
         let allQueries = [];
+        let count = 0;
 
         for(let dataset of formattedArray) {
+            count++;
             try {
                 let result = db.query(
                     `INSERT INTO spotify_running
@@ -122,7 +124,7 @@ class Spotify {
 
         await Promise.all(allQueries);
 
-        let response = `The Spotify data has been saved!`
+        let response = `The Spotify data has been saved! ${count} lines processed`
         console.log(response);
         return response;
     }
@@ -135,8 +137,12 @@ class Spotify {
          */
         let formattedArray = await spotifyParser(page, username, "alltime");
         let allQueries = [];
+        let count = 0;
+        let first = null;
 
         for (let dataset of formattedArray) {
+            if(!first) first = dataset.streams;
+            count++;
             try {
                 let result = db.query(
                     `INSERT INTO spotify_all_time
@@ -152,7 +158,7 @@ class Spotify {
 
         await Promise.all(allQueries);
 
-        let response = `The Spotify data has been saved!`
+        let response = `The Spotify data has been saved! ${count} lines processed. First value is ${first}.`
         console.log(response);
         return response;
     }

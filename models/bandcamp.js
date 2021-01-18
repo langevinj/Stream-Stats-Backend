@@ -15,9 +15,11 @@ class Bandcamp {
         */
         let formattedArray = await bandcampParser(page, username);
         let allQueries = [];
+        let count = 0;
 
         //insertion into DB for all time data
         for(let dataset of formattedArray){
+            count++;
             try {
                 let result = db.query(
                     `INSERT INTO bandcamp_all_time
@@ -33,7 +35,7 @@ class Bandcamp {
 
         //wait for all insertion to complete 
         await Promise.all(allQueries);
-        let response = `The Bandcamp data has been saved!`
+        let response = `The Bandcamp data has been saved! ${count} lines processed`
         console.log(response);
         return response;
     }

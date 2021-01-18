@@ -1,6 +1,7 @@
 //crawler for Spotify for artists
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const { response } = require('express');
 
 async function crawlSFA({ email, password, username } ) {
     //institute a new browser instance
@@ -84,8 +85,10 @@ async function crawlSFA({ email, password, username } ) {
     console.log("All-time stats written");
 
     await page.waitForTimeout(1000);
+    let respData = { "30days": data, "alltime": allData }
 
     browser.close();
+    return JSON.stringify(respData);
 }
 
 module.exports = { crawlSFA };

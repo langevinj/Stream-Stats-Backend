@@ -4,6 +4,7 @@
 
 const express = require("express");
 const { ensureLoggedIn } = require("../middleware/auth");
+const { decodeToken } = require("../helpers/tokens");
 const Distrokid = require("../models/distrokid");
 
 const router = express.Router();
@@ -16,7 +17,7 @@ const router = express.Router();
  
 router.post("/rawImport", ensureLoggedIn, async function(req, res, next) {
     try {
-        const response = await Distrokid.processRawImport(req.body);
+        const response = await Distrokid.processRawImport(req.body.page, decodeToken(req).username);
         return res.status(201).json({ response });
     } catch (err) {
         return next(err);

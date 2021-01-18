@@ -10,7 +10,7 @@ const { distrokidParser } = require('../helpers/parsers')
 class Distrokid {
 
     //parse the raw data from the user
-    static async processRawImport({ page, username }) {
+    static async processRawImport(page, username) {
 
         /**call helper function to format all the data
          *      returns array of objects containing each dataset

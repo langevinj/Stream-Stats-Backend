@@ -76,7 +76,5 @@ router.post("/rawAlltimeImport/:username", ensureCorrectUserOrAdmin, async funct
     }
 });
 
- 
-
 
 module.exports = router;

@@ -4,7 +4,6 @@
 const express = require("express");
 const { ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const Bandcamp = require("../models/bandcamp");
-const { decodeToken } = require("../helpers/tokens");
 
 const router = express.Router();
 

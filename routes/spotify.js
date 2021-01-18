@@ -4,8 +4,7 @@
 const jsonschema = require("jsonschema");
 
 const express = require("express");
-const { ensureLoggedIn } = require("../middleware/auth");
-const { decodeToken } = require("../helpers/tokens");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const spotifyCredentialsSchema = require("../schemas/spotifyCredentials.json");
 const Spotify = require("../models/spotify");
 
@@ -35,9 +34,9 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
  *      crawls Spotify for artists webpage and saves data to DB
  */
 
- router.post("/gatherData", ensureLoggedIn, async function (req, res, next) {
+ router.post("/gatherData/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
      try {
-         const response = Spotify.crawlAndSave(req.body.email, req.body.password, decodeToken(req).username);
+         const response = Spotify.crawlAndSave(req.body.email, req.body.password, req.params.username);
          return res.json({ response });
      } catch (err) {
          return next(err);
@@ -51,9 +50,9 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
  * Authorization required: loggedin
  */
 
- router.post("/rawMonthImport", ensureLoggedIn, async function(req, res, next){
+ router.post("/rawMonthImport/:username", ensureLoggedIn, async function(req, res, next){
      try {
-         const response = Spotify.processRawMonthImport(req.body.page, decodeToken(req).username);
+         const response = Spotify.processRawMonthImport(req.body.page, req.params.username);
          return res.json({ response });
      } catch (err) {
          return next(err);
@@ -68,9 +67,9 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
 * Authorization required: loggedin
 */
 
-router.post("/rawAlltimeImport", ensureLoggedIn, async function (req, res, next) {
+router.post("/rawAlltimeImport/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
     try {
-        const response = Spotify.processRawAlltimeImport(req.body.page, decodeToken(req).username);
+        const response = Spotify.processRawAlltimeImport(req.body.page, req.params.username);
         return res.json({ response });
     } catch (err) {
         return next(err);

@@ -3,8 +3,7 @@
 /** Routes for Distrokid*/
 
 const express = require("express");
-const { ensureLoggedIn } = require("../middleware/auth");
-const { decodeToken } = require("../helpers/tokens");
+const { ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const Distrokid = require("../models/distrokid");
 
 const router = express.Router();
@@ -15,9 +14,9 @@ const router = express.Router();
  * Authorization required: logged in
   */
  
-router.post("/rawImport", ensureLoggedIn, async function(req, res, next) {
+router.post("/rawImport/:username", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
-        const response = await Distrokid.processRawImport(req.body.page, decodeToken(req).username);
+        const response = await Distrokid.processRawImport(req.body.page, req.params.username);
         return res.status(201).json({ response });
     } catch (err) {
         return next(err);

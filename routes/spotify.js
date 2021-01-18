@@ -43,6 +43,40 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
      }
 });
 
+/** POST /rawMonthImport
+ * {page, username} => { respose }
+ *          take raw page data from the user, parse and save it to the DB
+ * 
+ * Authorization required: loggedin
+ */
+
+ router.post("/rawMonthImport", ensureLoggedIn, async function(req, res, next){
+     try {
+         const response = Spotify.processRawMonthImport(req.body);
+         return res.json({ response });
+     } catch (err) {
+         return next(err);
+     }
+ });
+
+
+/** POST /rawAlltimeImport
+* {page, username} => { respose }
+*          take raw page data from the user, parse and save it to the DB
+* 
+* Authorization required: loggedin
+*/
+
+router.post("/rawAlltimeImport", ensureLoggedIn, async function (req, res, next) {
+    try {
+        const response = Spotify.processRawAlltimeImport(req.body);
+        return res.json({ response });
+    } catch (err) {
+        return next(err);
+    }
+});
+
+ 
 
 
 module.exports = router;

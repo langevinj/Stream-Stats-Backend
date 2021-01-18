@@ -53,10 +53,11 @@ async function crawlSFA({ email, password, username } ) {
     
     await page.waitForTimeout(1000);
     //write scraped data to a JSON file, if there is an error log it
-    await fs.writeFile(`/spotifyData/spotify-${username}-30days.json`, JSON.stringify(data), {flag: "w" }, err => err ? console.log(err): null);
+    await fs.writeFile(`./spotifyData/spotify-${username}-30days.json`, JSON.stringify(data), {flag: "w" }, err => err ? console.log(err): null);
+    console.log("30day stats written");
 
     await page.waitForTimeout(1000);
-    console.log(filteredUrl)
+
     //visit all time stats
     await Promise.all([
         page.goto(`${filteredUrl}music/songs?time-filter=all`),
@@ -79,7 +80,8 @@ async function crawlSFA({ email, password, username } ) {
     });
 
     //write scraped data to a JSON file, if there is an error log it
-    await fs.writeFile(`./spotify-${username}-allTime.json`, JSON.stringify(allData), err => err ? console.log(err) : null);
+    await fs.writeFile(`./spotifyData/spotify-${username}-allTime.json`, JSON.stringify(allData), err => err ? console.log(err) : null);
+    console.log("All-time stats written");
 
     await page.waitForTimeout(1000);
 

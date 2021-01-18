@@ -101,7 +101,7 @@ class Spotify {
         /** Call helper parser to format all the data
          *      return array of objects containing each dataset per song
          */
-        let formattedArray = await spotifyParser(page, username);
+        let formattedArray = await spotifyParser(page, username, "month");
 
         //skipping some data for now
         let allQueries = [];
@@ -110,6 +110,36 @@ class Spotify {
             try {
                 let result = db.query(
                     `INSERT INTO spotify_running
+                    (title, streams, listeners, username)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
+                );
+                allQueries.push(result);
+            } catch (err) {
+                throw err;
+            }
+        }
+
+        await Promise.all(allQueries);
+
+        let response = `The Spotify data has been saved!`
+        console.log(response);
+        return response;
+    }
+
+    //parse raw page from user for the all time filter, insert into db
+    static async processRawAlltimeImport({ page, username }){
+
+        /** Call helper parser to format all the data
+         *      return array of objects containing each dataset per song
+         */
+        let formattedArray = await spotifyParser(page, username, "alltime");
+        let allQueries = [];
+
+        for (let dataset of formattedArray) {
+            try {
+                let result = db.query(
+                    `INSERT INTO spotify_all_time
                     (title, streams, listeners, username)
                     VALUES ($1, $2, $3, $4)
                     RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]

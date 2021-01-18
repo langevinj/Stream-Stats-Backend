@@ -117,10 +117,10 @@ async function bandcampParser(rawData, username){
     return formattedData
 }
 
-async function spotifyParser(rawData, username){
+async function spotifyParser(rawData, username, range){
     //helper function for finding start of the dataset
     function checkForTableStart(line){
-        return line.includes('Last 28 days');
+        return line.includes('Last 28 days') || line.includes('All time');
     }
 
     //helper function for finding end of the dataset
@@ -128,17 +128,32 @@ async function spotifyParser(rawData, username){
         return line.includes('Spotify AB');
     }
 
+
+
     //write a new .txt file for the raw data
-    await fs.writeFile(`./rawPages/spotify-month-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
-        if (err) throw err;
-    });
+    if(range === "month"){
+        await fs.writeFile(`./rawPages/spotify-month-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
+            if (err) throw err;
+        });
+    } else if (range === "alltime") {
+        await fs.writeFile(`./rawPages/spotify-alltime-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
+            if (err) throw err;
+        });
+    }
+    
 
     //read in the data from the file that was written
-    const rawContent = fs.readFileSync(`./rawPages/spotify-month-${username}.txt`, 'utf8');
+    let rawContent;
+    if (range === "month") {
+        rawContent = fs.readFileSync(`./rawPages/spotify-month-${username}.txt`, 'utf8');
+    } else if (range === "alltime") {
+        rawContent = fs.readFileSync(`./rawPages/spotify-alltime-${username}.txt`, 'utf8');
+    }
+    
 
     //create an array where each line is a new element
     let rawArray = rawContent.toString().split("\n").filter(Boolean);
-
+    
     //remove the start of the page
     let startIdx = rawArray.findIndex(checkForTableStart);
     rawArray.splice(0, startIdx + 2);
@@ -177,6 +192,7 @@ async function spotifyParser(rawData, username){
 
         formattedData.push(tempObject);
     }
+    console.log(formattedData)
 
     return formattedData
 }

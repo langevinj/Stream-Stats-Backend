@@ -3,6 +3,7 @@
 const db = require("../db");
 const bcrypt = require("bcrypt");
 const { crawlSFA } = require("../s/spotifyForArtists/main");
+const { spotifyParser } = require("../helpers/parsers");
 
 const { BCRYPT_WORK_FACTOR } = require ("../config.js");
 /** Functions for Spotify */
@@ -92,6 +93,15 @@ class Spotify {
         let response = `The Spotify data has been saved!`
         console.log(response);
         return response;
+    }
+
+    //parse raw page from user for the past month filter
+    static async processRawMonthImport({ page, username }) {
+
+        /** Call helper parser to format all the data
+         *      return array of objects containing each dataset per song
+         */
+        let formattedArray = await spotifyParser(page, username);
     }
 }
 

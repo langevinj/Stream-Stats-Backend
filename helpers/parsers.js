@@ -1,5 +1,6 @@
 
 const fs = require("fs");
+const { format } = require("path");
 const { distrokidDateConverter } = require('./dates');
 
 //turns each row into a valid object, returns an array containing all rows
@@ -116,4 +117,68 @@ async function bandcampParser(rawData, username){
     return formattedData
 }
 
-module.exports =  { distrokidParser, bandcampParser }
+async function spotifyParser(rawData, username){
+    //helper function for finding start of the dataset
+    function checkForTableStart(line){
+        return line.includes('Last 28 days');
+    }
+
+    //helper function for finding end of the dataset
+    function checkForTableEnd(line){
+        return line.includes('Spotify AB');
+    }
+
+    //write a new .txt file for the raw data
+    await fs.writeFile(`./rawPages/spotify-month-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
+        if (err) throw err;
+    });
+
+    //read in the data from the file that was written
+    const rawContent = fs.readFileSync(`./rawPages/spotify-month-${username}.txt`, 'utf8');
+
+    //create an array where each line is a new element
+    let rawArray = rawContent.toString().split("\n").filter(Boolean);
+
+    //remove the start of the page
+    let startIdx = rawArray.findIndex(checkForTableStart);
+    rawArray.splice(0, startIdx + 2);
+
+    //remove the end of the page
+    let endIdx = rawArray.findIndex(checkForTableEnd);
+    rawArray.splice(endIdx - 3);
+
+    /**trim the raw array down to an array containing strings for each track
+     *          each string contains, track title, total streams, complete, partial, and skip stats
+     * */
+    let justTracks = [];
+    let count = 0;
+    let idx = 0;
+    while (idx < rawArray.length) {
+        if (count === 0) {
+            count++;
+        } else if (count === 1) {
+            justTracks.push(rawArray[idx] + '\t' + rawArray[idx + 1]);
+            count++;
+        } else if (count === 2) {
+            count = 0;
+        } else {
+            count++;
+        }
+        idx++;
+    }
+
+    let formattedData = [];
+    //format the data for each song into an array of objects 
+    for (let el of justTracks) {
+        let temp = el.split("\t").filter(Boolean);
+
+        //create an object for the track entry
+        let tempObject = { "title": temp[0], "streams": parseInt(temp[1]) || 0, "listeners": parseInt(temp[2]) || 0, "views": parseInt(temp[3]) || 0, "saves": parseInt(temp[4]) || 0 }
+
+        formattedData.push(tempObject);
+    }
+
+    return formattedData
+}
+
+module.exports =  { distrokidParser, bandcampParser, spotifyParser }

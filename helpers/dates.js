@@ -31,4 +31,4 @@ function distrokidDateConverter(dateString){
     return tempDate.toISOString().split('T')[0];
 }
 
-module.exports = { distrokidDateConverter }
+module.exports = { distrokidDateConverter, monthInt, getDaysInMonth }

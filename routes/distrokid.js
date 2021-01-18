@@ -11,7 +11,7 @@ const router = express.Router();
 /** POST /rawImport { page } => { response }
  *          take raw page data from the user, parse and save data to the DB
  * 
- * Authorization required: admin or sameuser
+ * Authorization required: logged in
   */
  
 router.post("/rawImport", ensureLoggedIn, async function(req, res, next) {

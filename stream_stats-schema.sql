@@ -56,3 +56,28 @@ CREATE TABLE spotify_running (
         REFERENCES users ON DELETE CASCADE,
     stats_added DATE DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE bandcamp_all_time (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    plays INTEGER NOT NULL DEFAULT 0,
+    complete INTEGER NOT NULL DEFAULT 0,
+    partial INTEGER NOT NULL DEFAULT 0,
+    skip INTEGER NOT NULL DEFAULT 0,
+    username VARCHAR(25) 
+        REFERENCES users ON DELETE CASCADE,
+    stats_added DATE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE bandcamp_running (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    plays INTEGER NOT NULL DEFAULT 0,
+    complete INTEGER NOT NULL DEFAULT 0,
+    partial INTEGER NOT NULL DEFAULT 0,
+    skip INTEGER NOT NULL DEFAULT 0,
+    username VARCHAR(25) 
+        REFERENCES users ON DELETE CASCADE,
+    stats_added DATE DEFAULT CURRENT_TIMESTAMP
+);
+

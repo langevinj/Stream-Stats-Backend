@@ -1,4 +1,4 @@
-/** Tests for help methods
+/** Tests for helper methods
  *      run tests like 'jest dates.test.js'
  */
 

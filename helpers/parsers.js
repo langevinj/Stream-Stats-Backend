@@ -1,7 +1,16 @@
 
 const fs = require("fs");
-const { format } = require("path");
 const { distrokidDateConverter } = require('./dates');
+
+//helper function for finding start of useful dataset
+function checkForTableStart(line, startString){
+    return line.includes(startString);
+}
+
+//helper function for finding end of useful dataset
+function checkForTableEnd(line, endString){
+    return line.includes(endString);
+}
 
 //turns each row into a valid object, returns an array containing all rows
 function formatDistrokidData(array){
@@ -20,15 +29,9 @@ function formatDistrokidData(array){
 
 //helper function for parsing a raw distrokid page
 async function distrokidParser(rawData, username){  
-    //helper function for finding start of the dataset
-    function checkForTableStart(line) {
-        return line.includes('REPORTING MONTH');
-    }
-
-    //helper function for finding end of the dataset
-    function checkForTableEnd(line) {
-        return line.includes('Some info about earnings');
-    }
+        //string identifiers of the start/end of the table
+    const tableStart = 'REPORTING MONTH';
+    const tableEnd = 'Some info about earnings'
 
     //write a new .txt file for the raw data
     await fs.writeFile(`./rawPages/distrokid-${username}.txt`, rawData, {'encoding': 'utf8', 'flag': 'w'}, (err) => {
@@ -42,11 +45,11 @@ async function distrokidParser(rawData, username){
     let rawArray = rawContent.toString().split("\n").filter(line => !line.includes("100% of team"));
 
     //remove the start of the page
-    let startIdx = rawArray.findIndex(checkForTableStart);
+    let startIdx = rawArray.findIndex(checkForTableStart, tableStart);
     rawArray.splice(0, startIdx + 1);
 
     //remove the end of the page
-    let endIdx = rawArray.findIndex(checkForTableEnd);
+    let endIdx = rawArray.findIndex(checkForTableEnd, tableEnd);
     rawArray.splice(endIdx);
 
     return formatDistrokidData(rawArray)
@@ -54,16 +57,10 @@ async function distrokidParser(rawData, username){
 
 //helper function for parsing a raw bandcamp page
 async function bandcampParser(rawData, username){
-    //helper function for finding start of the dataset  
-    function checkForTableStart(line){
-        return line.includes('Total plays');
-    }
-
-    //helper function for finding end of the dataset
-    function checkForTableEnd(line){
-        return line.includes('play means the track was played');
-    }
-
+    //string identifiers of the start/end of the table
+    const tableStart = 'Total plays';
+    const tableEnd = 'play means the track was played'
+ 
     //write a new .txt file for the raw data
     await fs.writeFile(`./rawPages/bandcamp-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
         if (err) throw err;
@@ -76,11 +73,11 @@ async function bandcampParser(rawData, username){
     let rawArray = rawContent.toString().split("\n");
     //remove the start of the page
 
-    let startIdx = rawArray.findIndex(checkForTableStart);
+    let startIdx = rawArray.findIndex(checkForTableStart, tableStart);
     rawArray.splice(0, startIdx + 3);
 
     //remove the end of the page
-    let endIdx = rawArray.findIndex(checkForTableEnd);
+    let endIdx = rawArray.findIndex(checkForTableEnd, tableEnd);
     rawArray.splice(endIdx);
 
     /**trim the raw array down to an array containing strings for each track
@@ -118,17 +115,9 @@ async function bandcampParser(rawData, username){
 }
 
 async function spotifyParser(rawData, username, range){
-    //helper function for finding start of the dataset
-    function checkForTableStart(line){
-        return line.includes('Last 28 days') || line.includes('All time');
-    }
-
-    //helper function for finding end of the dataset
-    function checkForTableEnd(line){
-        return line.includes('Spotify AB');
-    }
-
-
+    //string identifiers of the start/end of the table
+    const tableStart = range === "month" ? 'Last 28 days' : 'All time';
+    const tableEnd = 'Spotify AB';
 
     //write a new .txt file for the raw data
     if(range === "month"){
@@ -149,18 +138,20 @@ async function spotifyParser(rawData, username, range){
     } else if (range === "alltime") {
         rawContent = fs.readFileSync(`./rawPages/spotify-alltime-${username}.txt`, 'utf8');
     }
+    console.log(rawContent)
     
 
     //create an array where each line is a new element
     let rawArray = rawContent.toString().split("\n").filter(Boolean);
-    
+    console.log(rawArray)
     //remove the start of the page
-    let startIdx = rawArray.findIndex(checkForTableStart);
-    rawArray.splice(0, startIdx + 2);
+    let startIdx = rawArray.findIndex(checkForTableStart, tableStart);
+    rawArray.splice(0, startIdx - 1);
 
     //remove the end of the page
-    let endIdx = rawArray.findIndex(checkForTableEnd);
+    let endIdx = rawArray.findIndex(checkForTableEnd, tableEnd);
     rawArray.splice(endIdx - 3);
+    console.log(rawArray)
 
     /**trim the raw array down to an array containing strings for each track
      *          each string contains, track title, total streams, complete, partial, and skip stats

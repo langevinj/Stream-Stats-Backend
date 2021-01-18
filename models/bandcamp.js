@@ -23,7 +23,7 @@ class Bandcamp {
                     `INSERT INTO bandcamp_all_time
                     (title, plays, complete, partial, skip, username)
                     VALUES ($1, $2, $3, $4, $5, $6)
-                    RETURNING username`, [dataset.title, dataset.plays, dataset.complete, dataset.partial, dataset.skip, dataset.username]
+                    RETURNING username`, [dataset.title, dataset.plays, dataset.complete, dataset.partial, dataset.skip, username]
                 );
                 allQueries.push(result);
             } catch (err) {

@@ -192,7 +192,6 @@ async function spotifyParser(rawData, username, range){
 
         formattedData.push(tempObject);
     }
-    console.log(formattedData)
 
     return formattedData
 }

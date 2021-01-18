@@ -108,7 +108,7 @@ async function bandcampParser(rawData, username){
         let temp = el.split("\t").filter(Boolean);
 
         //create an object for the track entry
-        let tempObject = { "title": temp[0], "plays": parseInt(temp[1]), "complete": parseInt(temp[2]), "partial": parseInt(temp[3]), "skip": parseInt(temp[4])}
+        let tempObject = { "title": temp[0], "plays": parseInt(temp[1]) || 0, "complete": parseInt(temp[2]) || 0, "partial": parseInt(temp[3]) || 0, "skip": parseInt(temp[4]) || 0}
 
         formattedData.push(tempObject);
     }

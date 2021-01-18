@@ -6,7 +6,7 @@ const { response } = require('express');
 async function crawlSFA({ email, password, username } ) {
     //institute a new browser instance
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         slowMo: 10
     });
 
@@ -24,7 +24,7 @@ async function crawlSFA({ email, password, username } ) {
         page.waitForNavigation({ waitUntil: 'networkidle2' })
     ]);
     
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(1000)
 
     //format the url properly to go to the correctly filtered page
     let filterIdx = page.url().search('home');

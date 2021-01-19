@@ -1,3 +1,4 @@
+/**Helper functions for parsing raw pages */
 
 const fs = require("fs");
 const { distrokidDateConverter } = require('./dates');
@@ -102,6 +103,7 @@ async function bandcampParser(rawData, username){
 
         formattedData.push(tempObject);
     }
+    console.log(formattedData)
 
     return formattedData
 }
@@ -164,6 +166,7 @@ async function spotifyParser(rawData, username, range){
     }
 
     let formattedData = [];
+    
     //format the data for each song into an array of objects 
     for (let el of justTracks) {
         let temp = el.split("\t").filter(Boolean);

@@ -72,14 +72,15 @@ async function bandcampParser(rawData, username){
     //create an array where each line is a new element
     let rawArray = rawContent.toString().split("\n");
     //remove the start of the page
-
-    let startIdx = rawArray.findIndex(checkForTableStart, tableStart);
+    let startIdx = rawArray.findIndex(line => line.includes(tableStart));
     rawArray.splice(0, startIdx + 3);
+    console.log(rawArray)
 
     //remove the end of the page
-    let endIdx = rawArray.findIndex(checkForTableEnd, tableEnd);
+    let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
     rawArray.splice(endIdx);
 
+    console.log(rawArray)
     /**trim the raw array down to an array containing strings for each track
      *          each string contains, track title, total streams, complete, partial, and skip stats
      * */

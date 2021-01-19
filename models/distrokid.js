@@ -56,11 +56,36 @@ class Distrokid {
             console.log(response)
             return response;
         }
-        
-        
-        
+    }
 
+    static async getUserDistrokidData(range="alltime", username){
+        const userRes = await db.query(
+            `SELECT username, is_admin as "isAdmin"
+            FROM users
+            WHERE username = $1`, [username]
+        );
+
+        const user = userRes.rows[0];
+
+        if (!user) throw new NotFoundError(`No user: ${username}`);
         
+        //get a list of all the applicable stores
+        const storesRes = await db.query(
+            `SELECT store 
+            FROM distrokid
+            GROUP BY store`
+        );
+        
+        
+        const distrokidRes = await db.query(
+            `SELECT title, store, SUM(quantity) AS plays, SUM(earnings) as profit
+            FROM distrokid
+            WHERE username = $1
+            GROUP BY store, title
+            ORDER BY title`, [username]
+        );
+        console.log(`Distrokidres is ${distrokidRes.rows}`);
+        return distrokidRes.rows;
     }
 }
 

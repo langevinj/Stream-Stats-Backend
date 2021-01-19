@@ -25,7 +25,6 @@ CREATE TABLE distrokid (
     stats_added DATE DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE spotify_credentials (
     id SERIAL PRIMARY KEY,
     email TEXT NOT NULL

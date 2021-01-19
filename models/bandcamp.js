@@ -59,9 +59,9 @@ class Bandcamp {
 
         const bandcampRes = await db.query(
             `SELECT title, plays, complete, partial, skip
-            FROM $1
-            WHERE username = $2
-            SORT BY plays DESC`, [table, username]
+            FROM ${table}
+            WHERE username = $1
+            ORDER BY plays DESC`, [username]
         );
 
         return bandcampRes.rows;

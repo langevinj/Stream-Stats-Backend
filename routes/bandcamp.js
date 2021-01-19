@@ -47,7 +47,8 @@ router.post("/rawMonthImport/:username", ensureCorrectUserOrAdmin, async functio
  router.get("/:username", ensureCorrectUserOrAdmin, async function(req, res, next){
      try {
          const response = await Bandcamp.getUserBandcampData(req.body.range, req.params.username);
-         return response;
+         console.log(response)
+         return res.status(200).json({response : response })
      } catch (err) {
          return next(err);
      }

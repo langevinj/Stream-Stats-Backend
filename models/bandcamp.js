@@ -8,7 +8,7 @@ const { bandcampParser } = require('../helpers/parsers');
 class Bandcamp {
 
     //parse the raw data from the user
-    static async processRawImport(page, username) {
+    static async processRawImport(page, username, range) {
 
         /**call helper function to format all the data
          *      returns array of objects containing each dataset
@@ -16,13 +16,15 @@ class Bandcamp {
         let formattedArray = await bandcampParser(page, username);
         let allQueries = [];
         let count = 0;
+        //designate which table to insert into
+        let table = range === "alltime" ? 'bandcamp_all_time' : 'bandcamp_running';
 
         //insertion into DB for all time data
         for(let dataset of formattedArray){
             count++;
             try {
                 let result = db.query(
-                    `INSERT INTO bandcamp_all_time
+                    `INSERT INTO ${table}
                     (title, plays, complete, partial, skip, username)
                     VALUES ($1, $2, $3, $4, $5, $6)
                     RETURNING username`, [dataset.title, dataset.plays, dataset.complete, dataset.partial, dataset.skip, username]

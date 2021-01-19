@@ -43,7 +43,7 @@ class Bandcamp {
         return response;
     }
 
-    static async getUserBandcampData(username, range="alltime"){
+    static async getUserBandcampData(range="alltime", username){
         const userRes = await db.query(
             `SELECT username, is_admin as "isAdmin"
             FROM users

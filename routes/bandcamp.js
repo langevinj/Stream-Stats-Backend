@@ -1,5 +1,6 @@
 "use strict";
 
+const { raw } = require("express");
 /** Routes for Bandcamp*/
 const express = require("express");
 const { ensureCorrectUserOrAdmin } = require("../middleware/auth");
@@ -36,6 +37,21 @@ router.post("/rawMonthImport/:username", ensureCorrectUserOrAdmin, async functio
         return next(err);
     }
 });
+
+/**GET /:username { range } => {[title, plays, complete, partial, skip], ...}
+ *      get bandcamp data for user with username
+ * 
+ * Authorization required: correct user or admin
+ */
+
+ router.get("/:username", ensureCorrectUserOrAdmin, async function(req, res, next){
+     try {
+         const response = await Bandcamp.getUserBandcampData(req.body.range, req.params.username);
+         return response;
+     } catch (err) {
+         return next(err);
+     }
+ });
 
 
 

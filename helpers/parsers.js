@@ -2,16 +2,6 @@
 const fs = require("fs");
 const { distrokidDateConverter } = require('./dates');
 
-//helper function for finding start of useful dataset
-function checkForTableStart(line, startString){
-    return line.includes(startString);
-}
-
-//helper function for finding end of useful dataset
-function checkForTableEnd(line, endString){
-    return line.includes(endString);
-}
-
 //turns each row into a valid object, returns an array containing all rows
 function formatDistrokidData(array){
     return array.map(row => {
@@ -29,11 +19,12 @@ function formatDistrokidData(array){
 
 //helper function for parsing a raw distrokid page
 async function distrokidParser(rawData, username){  
-        //string identifiers of the start/end of the table
+
+    //string identifiers of the start/end of the table
     const tableStart = 'REPORTING MONTH';
     const tableEnd = 'Some info about earnings'
 
-    //write a new .txt file for the raw data
+    //write a new .txt file with the raw data
     await fs.writeFile(`./rawPages/distrokid-${username}.txt`, rawData, {'encoding': 'utf8', 'flag': 'w'}, (err) => {
         if (err) throw err;
     });
@@ -45,11 +36,11 @@ async function distrokidParser(rawData, username){
     let rawArray = rawContent.toString().split("\n").filter(line => !line.includes("100% of team"));
 
     //remove the start of the page
-    let startIdx = rawArray.findIndex(checkForTableStart, tableStart);
+    let startIdx = rawArray.findIndex(line => line.includes(tableStart));
     rawArray.splice(0, startIdx + 1);
 
     //remove the end of the page
-    let endIdx = rawArray.findIndex(checkForTableEnd, tableEnd);
+    let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
     rawArray.splice(endIdx);
 
     return formatDistrokidData(rawArray)
@@ -57,11 +48,12 @@ async function distrokidParser(rawData, username){
 
 //helper function for parsing a raw bandcamp page
 async function bandcampParser(rawData, username){
+
     //string identifiers of the start/end of the table
     const tableStart = 'Total plays';
     const tableEnd = 'play means the track was played'
  
-    //write a new .txt file for the raw data
+    //write a new .txt file with the raw data
     await fs.writeFile(`./rawPages/bandcamp-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
         if (err) throw err;
     });
@@ -71,16 +63,15 @@ async function bandcampParser(rawData, username){
 
     //create an array where each line is a new element
     let rawArray = rawContent.toString().split("\n");
+
     //remove the start of the page
     let startIdx = rawArray.findIndex(line => line.includes(tableStart));
     rawArray.splice(0, startIdx + 3);
-    console.log(rawArray)
 
     //remove the end of the page
     let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
     rawArray.splice(endIdx);
 
-    console.log(rawArray)
     /**trim the raw array down to an array containing strings for each track
      *          each string contains, track title, total streams, complete, partial, and skip stats
      * */
@@ -116,6 +107,7 @@ async function bandcampParser(rawData, username){
 }
 
 async function spotifyParser(rawData, username, range){
+
     //string identifiers of the start/end of the table
     const tableStart = range === "month" ? 'Last 28 days' : 'All time';
     const tableEnd = 'Spotify AB';
@@ -139,20 +131,17 @@ async function spotifyParser(rawData, username, range){
     } else if (range === "alltime") {
         rawContent = fs.readFileSync(`./rawPages/spotify-alltime-${username}.txt`, 'utf8');
     }
-    console.log(rawContent)
     
-
     //create an array where each line is a new element
     let rawArray = rawContent.toString().split("\n").filter(Boolean);
-    console.log(rawArray)
+
     //remove the start of the page
-    let startIdx = rawArray.findIndex(checkForTableStart, tableStart);
+    let startIdx = rawArray.findIndex(line => line.includes(tableStart));
     rawArray.splice(0, startIdx - 1);
 
     //remove the end of the page
-    let endIdx = rawArray.findIndex(checkForTableEnd, tableEnd);
+    let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
     rawArray.splice(endIdx - 3);
-    console.log(rawArray)
 
     /**trim the raw array down to an array containing strings for each track
      *          each string contains, track title, total streams, complete, partial, and skip stats

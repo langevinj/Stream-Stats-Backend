@@ -1,6 +1,5 @@
 "use strict";
 
-const { raw } = require("express");
 /** Routes for Bandcamp*/
 const express = require("express");
 const { ensureCorrectUserOrAdmin } = require("../middleware/auth");

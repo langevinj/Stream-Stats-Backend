@@ -162,6 +162,30 @@ class Spotify {
         console.log(response);
         return response;
     }
+
+
+    static async getUserSpotifyData(range="alltime", username){
+        const userRes = await db.query(
+            `SELECT username, is_admin as "isAdmin"
+            FROM users
+            WHERE username = $1`, [username]
+        );
+
+        const user = userRes.rows[0];
+
+        if (!user) throw new NotFoundError(`No user: ${username}`);
+
+        const table = range === "alltime" ? 'spotify_all_time' : 'spotify_running';
+
+        const spotifyRes = await db.query(
+            `SELECT title, streams, listeners
+            FROM ${table}
+            WHERE username = $1
+            ORDER BY streams DESC`, [username]
+        );
+
+        return spotifyRes.rows;
+    }
 }
 
 

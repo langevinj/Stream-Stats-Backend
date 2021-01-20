@@ -14,7 +14,7 @@ const router = express.Router();
  * Authorization required: logged in
   */
  
-router.post("/rawImport/:username", ensureCorrectUserOrAdmin, async function(req, res, next) {
+router.post("/import/:username", ensureCorrectUserOrAdmin, async function(req, res, next) {
     try {
         const response = await Distrokid.processRawImport(req.body.page, req.params.username);
         return res.status(201).json({ response });

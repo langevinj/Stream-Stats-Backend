@@ -85,6 +85,7 @@ router.post("/rawAlltimeImport/:username", ensureCorrectUserOrAdmin, async funct
  router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
      try {
          const response = await Spotify.getUserSpotifyData(req.body.range, req.params.username);
+         console.log(response)
          return res.status(200).json({ response: response });
      } catch (err) {
          return next(err);

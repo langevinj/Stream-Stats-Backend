@@ -43,39 +43,6 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
      }
 });
 
-/** POST /rawMonthImport
- * {page, username} => { respose }
- *          take raw page data from the user, parse and save it to the DB
- * 
- * Authorization required: loggedin
- */
-
-//  router.post("/rawMonthImport/:username", ensureLoggedIn, async function(req, res, next){
-//      try {
-//          const response = Spotify.processRawMonthImport(req.body.page, req.params.username);
-//          return res.json({ response });
-//      } catch (err) {
-//          return next(err);
-//      }
-//  });
-
-
-// /** POST /rawAlltimeImport
-// * {page, username} => { respose }
-// *          take raw page data from the user, parse and save it to the DB
-// * 
-// * Authorization required: loggedin
-// */
-
-// router.post("/rawAlltimeImport/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
-//     try {
-//         const response = Spotify.processRawAlltimeImport(req.body.page, req.params.username);
-//         return res.json({ response });
-//     } catch (err) {
-//         return next(err);
-//     }
-// });
-
 /** POST /import/:username
  * {page, range} => {response}
  *          take a raw page from the user, parse and save it to the DB

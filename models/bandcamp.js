@@ -9,7 +9,8 @@ const { NotFoundError } = require('../expressError');
 class Bandcamp {
 
     //parse the raw data from the user
-    static async processRawImport(page, username, range) {
+    static async processRawImport(data, username) {
+        const { page, range } = data;
 
         /**call helper function to format all the data
          *      returns array of objects containing each dataset

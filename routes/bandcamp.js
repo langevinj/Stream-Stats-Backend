@@ -38,6 +38,21 @@ router.post("/rawMonthImport/:username", ensureCorrectUserOrAdmin, async functio
     }
 });
 
+/** POST /import {page} => 
+ *      take a raw page of data from the user, parse, and save it to the DB
+ * 
+ * Authorization required: correct user or admin
+ */
+
+router.post("/import/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
+    try {
+        const response = await Bandcamp.processRawImport(req.body, req.params.username);
+        return res.status(201).json({ response });
+    } catch (err) {
+        return next(err);
+    }
+});
+
 /**GET /:username { range } => {[title, plays, complete, partial, skip], ...}
  *      get bandcamp data for user with username
  * 

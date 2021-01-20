@@ -11,7 +11,10 @@ class Bandcamp {
     //parse the raw data from the user
     static async processRawImport(data, username) {
         const { page, range } = data;
-        if(!page) return `No data provided for bandcamp ${range}`
+        if(!page){
+            console.log(`No data provided for bandcamp ${range}`);
+            return `No data provided for bandcamp ${range}`
+        } 
 
         /**call helper function to format all the data
          *      returns array of objects containing each dataset

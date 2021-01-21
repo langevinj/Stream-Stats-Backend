@@ -10,14 +10,31 @@ async function crawlSFA({ email, password, username } ) {
     // try {
     //institute a new browser instance
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         slowMo: 25,
         stealth: true
     });
 
     const page = await browser.newPage();
 
-    // await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36');
+    await page.setExtraHTTPHeaders({
+        'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8'
+    });
+
+    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36');
+    const C_OPTIMIZE = true;
+
+    if (C_OPTIMIZE) {
+        await page.setRequestInterception(true);
+        const block_ressources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
+        page.on('request', request => {
+            //if (request.resourceType() === 'image')
+            if (block_ressources.indexOf(request.resourceType) > 0)
+                request.abort();
+            else
+                request.continue();
+        });
+    }
 
     //go to the spotify for artists login page
     await page.goto('https://accounts.spotify.com/en/login?continue=https:%2F%2Fartists.spotify.com%2F');
@@ -37,12 +54,13 @@ async function crawlSFA({ email, password, username } ) {
     //format the url properly to go to the correctly filtered page
     let filterIdx = await page.url().search('home');
     let filteredUrl = await page.url().substring(0, filterIdx);
+    console.log(`filteredURL is ${filteredUrl}`)
 
     await page.waitForTimeout(2000);
-    page.goto(`${filteredUrl}music/songs?time-filter=28days`);
+    // page.goto(`${filteredUrl}music/songs?time-filter=28days`);
 
-    await page.waitForTimeout(5000);
-    browser.close();
+    // await page.waitForTimeout(1000);
+
     // navigate to stats page for last 28days
     await Promise.all([
         page.goto(`${filteredUrl}music/songs?time-filter=28days`),

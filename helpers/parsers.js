@@ -140,8 +140,8 @@ async function spotifyParser(rawData, username, range){
 
     //remove the start of the page
     let startIdx = rawArray.findIndex(line => line.includes(tableStart));
-    rawArray.splice(0, startIdx - 1);
-
+    rawArray.splice(0, startIdx + 2);
+    
     //remove the end of the page
     let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
     rawArray.splice(endIdx - 3);

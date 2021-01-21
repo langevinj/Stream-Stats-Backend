@@ -129,7 +129,7 @@ class Spotify {
     }
 
 
-    static async getUserSpotifyData(range="alltime", username){
+    static async getUserSpotifyData(range, username){
         const userRes = await db.query(
             `SELECT username, is_admin as "isAdmin"
             FROM users

@@ -26,7 +26,7 @@ async function distrokidParser(rawData, username){
     const tableEnd = 'Some info about earnings'
 
     //write a new .txt file with the raw data
-    await fs.writeFile(`./rawPages/distrokid-${username}.txt`, rawData, {'encoding': 'utf8', 'flag': 'w'}, (err) => {
+    fs.writeFileSync(`./rawPages/distrokid-${username}.txt`, rawData, {'encoding': 'utf8', 'flag': 'w'}, (err) => {
         if (err) throw err;
     });
 
@@ -54,7 +54,7 @@ async function bandcampParser(rawData, username){
     //string identifiers of the start/end of the table
     const tableStart = 'Total plays';
     const tableEnd = 'play means the track was played'
-    console.log(`Rawdata is ${rawData}`)
+
     //write a new .txt file with the raw data
     fs.writeFileSync(`./rawPages/bandcamp-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
         if (err) throw err;
@@ -62,16 +62,13 @@ async function bandcampParser(rawData, username){
 
     //read in the data from the file that was written
     const rawContent = fs.readFileSync(`./rawPages/bandcamp-${username}.txt`, 'utf8');
-    console.log(`Rawcontent is ${rawContent}`)
+    
     //create an array where each line is a new element
     let rawArray = rawContent.toString().split("\n");
-    console.log(rawArray)
 
     //remove the start of the page
     let startIdx = rawArray.findIndex(line => line.includes(tableStart));
     rawArray.splice(0, startIdx + 3);
-
-    console.log(`Rawarray after start chop ${rawArray}`)
 
     //remove the end of the page
     let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
@@ -120,11 +117,11 @@ async function spotifyParser(rawData, username, range){
 
     //write a new .txt file for the raw data
     if(range === "month"){
-        await fs.writeFile(`./rawPages/spotify-month-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
+        fs.writeFileSync(`./rawPages/spotify-month-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
             if (err) throw err;
         });
     } else if (range === "alltime") {
-        await fs.writeFile(`./rawPages/spotify-alltime-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
+        fs.writeFileSync(`./rawPages/spotify-alltime-${username}.txt`, rawData, { 'encoding': 'utf8', 'flag': 'w' }, (err) => {
             if (err) throw err;
         });
     }

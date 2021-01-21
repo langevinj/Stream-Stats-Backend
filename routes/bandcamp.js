@@ -28,9 +28,9 @@ router.post("/import/:username", ensureCorrectUserOrAdmin, async function (req, 
  * Authorization required: correct user or admin
  */
 
- router.get("/:username", ensureCorrectUserOrAdmin, async function(req, res, next){
+ router.get("/:username/:range", ensureCorrectUserOrAdmin, async function(req, res, next){
      try {
-         const response = await Bandcamp.getUserBandcampData(req.body.range, req.params.username);
+         const response = await Bandcamp.getUserBandcampData(req.params.range, req.params.username);
          return res.status(200).json({response : response })
      } catch (err) {
          return next(err);

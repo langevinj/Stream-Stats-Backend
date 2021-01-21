@@ -69,6 +69,26 @@ class Distrokid {
         const user = userRes.rows[0];
 
         if (!user) throw new NotFoundError(`No user: ${username}`);
+
+        let result;
+
+        if(range === "alltime"){
+            const distrokidRes = await db.query(
+                `SELECT title, store, SUM(quantity) AS plays, SUM(earnings) as profit
+            FROM distrokid
+            WHERE username = $1
+            GROUP BY store, title
+            ORDER BY title`, [username]
+            );
+
+            result = distrokidRes.rows;
+        } else {
+            //get the string for the current date
+            // let currDate = new Date();
+            // let str = currDate.toISOString().substring(0, 10);
+            
+            
+        }
         
         //get a list of all the applicable stores
         const storesRes = await db.query(
@@ -78,15 +98,9 @@ class Distrokid {
         );
         
         
-        const distrokidRes = await db.query(
-            `SELECT title, store, SUM(quantity) AS plays, SUM(earnings) as profit
-            FROM distrokid
-            WHERE username = $1
-            GROUP BY store, title
-            ORDER BY title`, [username]
-        );
-        console.log(`Distrokidres is ${distrokidRes.rows}`);
-        return distrokidRes.rows;
+        
+
+        return result;
     }
 }
 

@@ -91,7 +91,7 @@ class Spotify {
         let response = `The Spotify data has been saved!`
         console.log(response);
         return response;
-    }
+}
 
 
     //only handling partial data for now

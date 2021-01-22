@@ -6,7 +6,9 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const spotifyCredentialsSchema = require("../schemas/spotifyCredentials.json");
+const spotifyLoginSchema = require("../schemas/spotifyLogin.json");
 const Spotify = require("../models/spotify");
+const { BadRequestError } = require("../expressError");
 
 const router = express.Router();
 
@@ -36,9 +38,15 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
 
  router.post("/gatherData/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
      try {
+         const validator = jsonschema.validate(req.body, spotifyLoginSchema);
+        if(!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+         }
          const response = Spotify.crawlAndSave(req.body.email, req.body.password, req.params.username);
          return res.json({ response });
      } catch (err) {
+         console.log(err)
          return next(err);
      }
 });

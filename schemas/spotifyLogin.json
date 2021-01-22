@@ -1,0 +1,29 @@
+{
+    "type": "object",
+    "examples": [
+        {
+            "email": "test@test.com",
+            "password": "1jetbdytT`^0"
+        }
+    ],
+    "required": [
+        "email",
+        "password"
+    ],
+    "properties": {
+        "email": {
+            "type": "string",
+            "examples": [
+                "test@test.com"
+            ],
+            "format": "email"
+        },
+        "password": {
+            "type": "string",
+            "examples": [
+                "1jetbdytT`^0"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

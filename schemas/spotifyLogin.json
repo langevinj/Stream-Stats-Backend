@@ -22,7 +22,8 @@
             "type": "string",
             "examples": [
                 "1jetbdytT`^0"
-            ]
+            ],
+            "minLength": 1
         }
     },
     "additionalProperties": false

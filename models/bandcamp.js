@@ -12,7 +12,7 @@ class Bandcamp {
     static async processRawImport(data, username) {
         const { page, range } = data;
         if(!page){
-            console.log(`No data provided for bandcamp ${range}`);
+            // console.log(`No data provided for bandcamp ${range}`);
             return `No data provided for bandcamp ${range}`
         } 
 

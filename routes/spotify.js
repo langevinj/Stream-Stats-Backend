@@ -41,7 +41,14 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
          const validator = jsonschema.validate(req.body, spotifyLoginSchema);
         if(!validator.valid) {
             const errs = validator.errors.map(e => e.stack);
-            throw new BadRequestError(errs);
+
+            function makeCustomErrors(error){
+                if (error.includes("instance.email")) return "You didn't enter a valid email";
+                if (error.includes("instance.password")) return "You didn't enter a valid password";
+            }
+
+            const customErrs = errs.map(e => makeCustomErrors(e));
+            throw new BadRequestError(customErrs);
          }
          const response = Spotify.crawlAndSave(req.body.email, req.body.password, req.params.username);
          return res.json({ response });

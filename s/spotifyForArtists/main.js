@@ -4,6 +4,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const { response } = require('express');
+const { deserialize } = require('v8');
 
 async function crawlSFA({ email, password, username } ) {
 
@@ -16,6 +17,9 @@ async function crawlSFA({ email, password, username } ) {
     });
 
     const page = await browser.newPage();
+    page.on('dialog', async dialog => {
+            console.log(dialog.message());
+    });
 
     await page.setExtraHTTPHeaders({
         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8'
@@ -43,18 +47,17 @@ async function crawlSFA({ email, password, username } ) {
     await page.type('#login-username', email);
     await page.type('#login-password', password);
 
-    //click the login button and wait for the new page to load
-    await Promise.all([
-        page.click('#login-button'),
-        page.waitForNavigation({ waitUntil: 'networkidle2' })
-    ]);
 
-    const hasError = (span) => {
-        span.textContent() === "Incorrect username or password."
+    await page.click('#login-button');
+    await page.waitForTimeout(3000);
+    if (page.url() === 'https://accounts.spotify.com/en/login?continue=https:%2F%2Fartists.spotify.com%2F') {
+        browser.close();
+        return "LOGIN ERROR";
+    } else {
+        await page.waitForNavigation({ waitUntil: 'networkidle2' });
     }
-
-    const loginErrors = page.$$eval('span', spans.some(hasError));
-    if(loginErrors) return new Error("Incorrect username or password");
+    
+    page.waitForTimeout(2000);
 
     page.waitForTimeout(3000);
 

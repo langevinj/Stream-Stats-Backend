@@ -50,8 +50,8 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
             const customErrs = errs.map(e => makeCustomErrors(e));
             throw new BadRequestError(customErrs);
          }
-         console.log("starting")
-         const response = Spotify.crawlAndSave(req.body.email, req.body.password, req.params.username);
+
+         const response = await Spotify.crawlAndSave(req.body.email, req.body.password, req.params.username);
          return res.json({ response });
      } catch (err) {
          console.log(err)

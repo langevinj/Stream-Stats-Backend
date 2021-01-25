@@ -3,6 +3,7 @@
 const db = require("../db");
 const { crawlSFA } = require("../s/spotifyForArtists/main");
 const { spotifyParser } = require("../helpers/parsers");
+const { ExpressError, BadRequestError } = require("../expressError");
 
 /** Functions for Spotify */
 
@@ -44,53 +45,54 @@ class Spotify {
         // let unhashedPwd =
         
         //initiate the crawl
-        let crawlRes = await crawlSFA({ email, password, username });
-        //parse the returned data
-        let data = JSON.parse(crawlRes);
-        let monthData = data['30days'];
-        let allTimeData = data['allTime'];
+            let crawlRes = await crawlSFA({ email, password, username });
+            if(crawlRes === "LOGIN ERROR") throw new BadRequestError("Invalid username or password.")
+            // /parse the returned data
+            let data = JSON.parse(crawlRes);
+            let monthData = data['30days'];
+            let allTimeData = data['allTime'];
 
-        let allMonthQueries = [];
-        //enter the past 28days data into the DB
-        for(let dataset of monthData){
-            try {
-                let result = db.query(
-                    `INSERT INTO spotify_running
+            let allMonthQueries = [];
+            //enter the past 28days data into the DB
+            for (let dataset of monthData) {
+                try {
+                    let result = db.query(
+                        `INSERT INTO spotify_running
                     (title, streams, listeners, username)
                     VALUES ($1, $2, $3, $4)
                     RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
-                );
-                allMonthQueries.push(result);
-            } catch (err) {
-                throw err;
-                // throw new Error("Error importing data.");
+                    );
+                    allMonthQueries.push(result);
+                } catch (err) {
+                    throw err;
+                    // throw new Error("Error importing data.");
+                }
             }
-        }
 
-        //wait for the month queries to finish
-        await Promise.all(allMonthQueries);
+            //wait for the month queries to finish
+            await Promise.all(allMonthQueries);
 
-        let allTimeQueries = [];
-        //enter the alltime data
-        for(let dataset of allTimeData) {
-            try {
-                let result = db.query(
-                    `INSERT INTO spotify_all_time
+            let allTimeQueries = [];
+            //enter the alltime data
+            for (let dataset of allTimeData) {
+                try {
+                    let result = db.query(
+                        `INSERT INTO spotify_all_time
                     (title, streams, listeners, username)
                     VALUES ($1, $2, $3, $4)
                     RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
-                );
-                allTimeQueries.push(result);
-            } catch (err) {
-                throw new Error("Error importing data.");
+                    );
+                    allTimeQueries.push(result);
+                } catch (err) {
+                    throw new Error("Error importing data.");
+                }
             }
-        }
-        //wait for all queries to complete
-        await Promise.all(allTimeQueries);
+            //wait for all queries to complete
+            await Promise.all(allTimeQueries);
 
-        let response = `The Spotify data has been saved!`
-        console.log(response);
-        return response;
+            let response = `The Spotify data has been saved!`
+            console.log(response);
+            return response;
 }
 
 

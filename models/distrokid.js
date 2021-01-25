@@ -78,7 +78,7 @@ class Distrokid {
             FROM distrokid
             WHERE username = $1
             GROUP BY store, title
-            ORDER BY title`, [username]
+            ORDER BY plays DESC`, [username]
             );
 
             result = distrokidRes.rows;

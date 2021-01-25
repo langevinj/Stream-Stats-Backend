@@ -66,7 +66,8 @@ class Bandcamp {
             `SELECT title, plays, complete, partial, skip
             FROM ${table}
             WHERE username = $1
-            ORDER BY plays DESC`, [username]
+            ORDER BY plays DESC
+            LIMIT 10`, [username]
         );
 
         return bandcampRes.rows;

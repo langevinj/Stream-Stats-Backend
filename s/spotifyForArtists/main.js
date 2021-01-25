@@ -49,6 +49,13 @@ async function crawlSFA({ email, password, username } ) {
         page.waitForNavigation({ waitUntil: 'networkidle2' })
     ]);
 
+    const hasError = (span) => {
+        span.textContent() === "Incorrect username or password."
+    }
+
+    const loginErrors = page.$$eval('span', spans.some(hasError));
+    if(loginErrors) return new Error("Incorrect username or password");
+
     page.waitForTimeout(3000);
 
     //format the url properly to go to the correctly filtered page

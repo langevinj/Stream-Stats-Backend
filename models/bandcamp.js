@@ -25,6 +25,19 @@ class Bandcamp {
         //designate which table to insert into
         let table = range === "alltime" ? 'bandcamp_all_time' : 'bandcamp_running';
 
+
+        if (formattedArray.length) {
+            //remove soon to be outdated entries from the users db
+            try {
+                let result = await db.query(
+                    `DELETE FROM ${table}
+                    WHERE username = $1`, [username]
+                );
+            } catch (err) {
+                throw new Error("Failure to remove old data!");
+            }
+        }
+
         //insertion into DB for all time data
         for(let dataset of formattedArray){
             count++;

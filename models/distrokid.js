@@ -18,6 +18,19 @@ class Distrokid {
         */
         let formattedArray = await distrokidParser(page, username);
 
+        //remove outdated info from db before inputting new data
+        if(formattedArray.length){
+         try{
+             let res = await db.query(
+                 `DELETE FROM distrokid
+                WHERE username = $1`, [username]
+             );
+        } catch (err){
+            throw new Error("Unable to delete old data.")
+        }
+            
+        }
+
         await insertIntoDB(formattedArray);
 
         async function insertIntoDB(formattedArray){

@@ -52,6 +52,29 @@ class Spotify {
             let monthData = data['30days'];
             let allTimeData = data['allTime'];
 
+            //remove old data from the tables before importing new data
+            if(monthData){
+                try {
+                    let res = await db.query(
+                        `DELETE FROM spotify_running
+                        WHERE username = $1`, [username]
+                    );
+                } catch (err){
+                    throw new Error("Unable to delete old data");
+                }
+            }
+
+            if(allTimeData){
+                try {
+                    let res = await db.query(
+                        `DELETE FROM spotify_all_time
+                        WHERE username = $1`, [username]
+                    );
+                } catch (err) {
+                    throw new Error("Unable to delete old data");
+                }  
+            }
+
             let allMonthQueries = [];
             //enter the past 28days data into the DB
             for (let dataset of monthData) {

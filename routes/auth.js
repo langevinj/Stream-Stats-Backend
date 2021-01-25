@@ -50,7 +50,25 @@ router.post("/register", async function (req, res, next) {
         const validator = jsonschema.validate(req.body, userRegisterSchema);
         if (!validator.valid) {
             const errs = validator.errors.map(e => e.stack);
-            throw new BadRequestError(errs);
+
+            function makeCustomErrors(error) {
+                if (error.includes("instance.email")) return "You didn't enter a valid email";
+                
+                if (error.includes("instance.password")){
+                    if(error.includes("maximum")) return "The password you entered is too long";
+                    if(error.includes("minimum")) return "The password you entered is too short";
+                    return "Invalid password"
+                } 
+
+                if(error.includes("username")){
+                    if (error.includes("maximum")) return "The username you entered is too long";
+                    if (error.includes("minimum")) return "The username you entered is too short";
+                    return "Invalid username"
+                }
+            }
+
+            const customErrs = errs.map(e => makeCustomErrors(e));
+            throw new BadRequestError(customErrs);
         }
 
         const newUser = await User.register({ ...req.body, isAdmin: false });

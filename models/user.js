@@ -60,7 +60,7 @@ class User {
           [username],
       );  
       if (duplicateCheck.rows[0]) {
-          throw new BadRequestError(`Duplicate username: ${username}`);
+          throw new BadRequestError(`Sorry, that username is already taken.`);
       }  
       const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);  
       const result = await db.query(

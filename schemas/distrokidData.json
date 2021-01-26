@@ -1,0 +1,98 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "examples": [
+        {
+            "reportingMonth": "2020-10-16",
+            "saleMonth": "2020-10-31",
+            "store": "Apple Music",
+            "title": "I feel fine",
+            "quantity": 5000,
+            "releaseType": "Album",
+            "paid": "$500",
+            "saleCountry": "US",
+            "earnings": 0.007869521
+        }
+    ],
+    "required": [
+        "reportingMonth",
+        "saleMonth",
+        "store",
+        "title",
+        "quantity",
+        "releaseType",
+        "paid",
+        "saleCountry",
+        "earnings"
+    ],
+    "properties": {
+        "reportingMonth": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "examples": [
+                "2020-10-16"
+            ]
+        },
+        "saleMonth": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "examples": [
+                "2020-10-31"
+            ]
+        },
+        "store": {
+            "$id": "#/properties/store",
+            "type": "string",
+            "examples": [
+                "Apple Music"
+            ]
+        },
+        "title": {
+            "$id": "#/properties/title",
+            "type": "string",
+            "examples": [
+                "I feel fine"
+            ]
+        },
+        "quantity": {
+            "$id": "#/properties/quantity",
+            "type": "integer",
+            "default": 0,
+            "examples": [
+                5000
+            ]
+        },
+        "releaseType": {
+            "$id": "#/properties/releaseType",
+            "type": "string",
+            "examples": [
+                "Album"
+            ]
+        },
+        "paid": {
+            "$id": "#/properties/paid",
+            "type": "string",
+            "examples": [
+                "$500"
+            ]
+        },
+        "saleCountry": {
+            "$id": "#/properties/saleCountry",
+            "type": "string",
+            "examples": [
+                "US"
+            ]
+        },
+        "earnings": {
+            "$id": "#/properties/earnings",
+            "type": "number",
+            "examples": [
+                0.007869521
+            ]
+        }
+    },
+    "additionalProperties": false
+}

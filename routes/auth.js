@@ -50,7 +50,7 @@ router.post("/register", async function (req, res, next) {
         const validator = jsonschema.validate(req.body, userRegisterSchema);
         if (!validator.valid) {
             const errs = validator.errors.map(e => e.stack);
-
+            console.log(errs)
             function makeCustomErrors(error) {
                 if (error.includes("instance.email")) return "You didn't enter a valid email";
                 

@@ -1,7 +1,9 @@
 "use strict"
 
+const jsonschema = require("jsonschema");
 const db = require("../db");
-const fs = require("fs");
+const distrokidDataSchema = require("../schemas/distrokidData.json")
+const { BadRequestError } = require("../expressError");
 
 const { distrokidParser } = require('../helpers/parsers') 
 
@@ -18,8 +20,13 @@ class Distrokid {
         */
         let formattedArray = await distrokidParser(page, username);
 
+        // if(!formattedArray.length){
+        //     throw new Error("The distrokid data you provided was incorrectly formatted. Please try pasting again.")
+        // }
+
         //remove outdated info from db before inputting new data
-        if(formattedArray.length){
+        if(formattedArray[0]){
+
          try{
              let res = await db.query(
                  `DELETE FROM distrokid
@@ -36,38 +43,46 @@ class Distrokid {
         async function insertIntoDB(formattedArray){
             let allQueries = []
             let count = 0;
+            let fails = 0;
+
             for(let dataset of formattedArray){
-                try{
-                    if(dataset.earnings !== undefined){
-                        let result = db.query(
-                            `INSERT INTO distrokid
+                    const validator = jsonschema.validate(dataset, distrokidDataSchema);
+                    if(!validator.valid){
+                        fails++;
+                    } else {
+                        if (dataset.earnings !== undefined) {
+                            let result = db.query(
+                                `INSERT INTO distrokid
                         (username, reporting_month, sale_month, store, title, quantity,     release_type, paid, sale_country, earnings)
                         VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
                         RETURNING username`,
-                            [
-                                username,
-                                dataset.reportingMonth,
-                                dataset.saleMonth,
-                                dataset.store,
-                                dataset.title,
-                                parseInt(dataset.quantity),
-                                dataset.releaseType,
-                                dataset.paid,
-                                dataset.saleCountry,
-                                parseFloat(dataset.earnings.substring(1))
-                            ],
-                        );
-                        count++;
-                        allQueries.push(result);
+                                [
+                                    username,
+                                    dataset.reportingMonth,
+                                    dataset.saleMonth,
+                                    dataset.store,
+                                    dataset.title,
+                                    parseInt(dataset.quantity),
+                                    dataset.releaseType,
+                                    dataset.paid,
+                                    dataset.saleCountry,
+                                    parseFloat(dataset.earnings.substring(1))
+                                ],
+                            );
+                            count++;
+                            allQueries.push(result);
+                        }
                     }
-                } catch (err){
-                    throw new Error("Error importing data.")
-                }
             }
 
+            
+
             await Promise.all(allQueries);
+
+            if (fails !== 0) throw new BadRequestError(`Error importing ${fails} distrokid lines. Please try again.`);
+
             let response = `The Distrokid data has been saved! ${count} lines processed.`
-            console.log(response)
+            console.log(response);
             return response;
         }
     }

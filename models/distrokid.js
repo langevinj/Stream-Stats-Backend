@@ -81,8 +81,8 @@ class Distrokid {
 
             if (fails !== 0) throw new BadRequestError(`Error importing ${fails} distrokid lines. Please try again.`);
 
-            let response = `The Distrokid data has been saved! ${count} lines processed.`
-            console.log(response);
+            // let response = `The Distrokid data has been saved! ${count} lines processed.`
+            let response = "Distrokid"
             return response;
         }
     }

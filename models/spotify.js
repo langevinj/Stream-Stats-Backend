@@ -48,7 +48,7 @@ class Spotify {
         
         //initiate the crawl
             let crawlRes = await crawlSFA({ email, password, username });
-            if(crawlRes === "LOGIN ERROR") throw new BadRequestError("Invalid username or password.")
+            if(crawlRes === "LOGIN ERROR") throw new BadRequestError("Invalid email or password.")
             // /parse the returned data
             let data = JSON.parse(crawlRes);
             let monthData = data['30days'];
@@ -136,8 +136,7 @@ class Spotify {
                 throw new BadRequestError("Error importing Spotify for Artists 28 day data. Try again manually.");
             }
 
-            let response = `The Spotify data has been saved!`
-            console.log(response);
+            let response = "Spotify All time and 28days from login"
             return response;
 }
 
@@ -185,8 +184,8 @@ class Spotify {
 
         if(fails !== 0) throw new BadRequestError(`Error importing ${fails} lines of Spotify ${correctRange} data. Please try again.`);
 
-        let response = `The Spotify data has been saved! ${count} lines processed`
-        console.log(response);
+        // let response = `The Spotify data has been saved! ${count} lines processed`
+        let response = range === "alltime" ? "Spotify All Time" : "Spotify 28 days";
         return response;
     }
 

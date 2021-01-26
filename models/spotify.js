@@ -145,7 +145,10 @@ class Spotify {
     static async processRawImport(data, username){
         const { page, range } = data;
         //if the page is empty, return without doing any work
-        if(!page) return `No data was provided for spotify ${range}`
+        if(!page){
+            // return `No data was provided for spotify ${range}`
+            return
+        } 
 
         let formattedArray = await spotifyParser(page, username, range);
 

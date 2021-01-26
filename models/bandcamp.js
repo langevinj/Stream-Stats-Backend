@@ -15,7 +15,8 @@ class Bandcamp {
         const { page, range } = data;
         if(!page){
             // console.log(`No data provided for bandcamp ${range}`);
-            return `No data provided for bandcamp ${range}`
+            // return `No data provided for bandcamp ${range}`
+            return
         } 
 
         /**call helper function to format all the data

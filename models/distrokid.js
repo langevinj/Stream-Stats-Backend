@@ -13,7 +13,10 @@ class Distrokid {
 
     //parse the raw data from the user
     static async processRawImport(page, username) {
-        if(!page) return `No data provided for distrokid`
+        if(!page){
+            // return `No data provided for distrokid`
+            return 
+        } 
 
         /**call helper function to format all the data
          *      returns array of objects containing each dataset

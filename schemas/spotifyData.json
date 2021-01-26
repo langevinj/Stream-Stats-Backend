@@ -1,0 +1,53 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "title": "testtitle",
+            "streams": 1000,
+            "listeners": 956,
+            "saves": 405
+        }
+    ],
+    "required": [
+        "title",
+        "streams",
+        "listeners",
+        "saves"
+    ],
+    "properties": {
+        "title": {
+            "$id": "#/properties/title",
+            "type": "string",
+            "examples": [
+                "testtitle"
+            ]
+        },
+        "streams": {
+            "$id": "#/properties/streams",
+            "type": "integer",
+            "examples": [
+                1000
+            ]
+        },
+        "listeners": {
+            "$id": "#/properties/listeners",
+            "type": "integer",
+            "examples": [
+                956
+            ]
+        },
+        "saves": {
+            "$id": "#/properties/saves",
+            "type": "integer",
+            "examples": [
+                405
+            ]
+        }
+    },
+    "additionalProperties": false
+}

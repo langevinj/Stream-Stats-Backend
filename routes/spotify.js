@@ -68,7 +68,7 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
  */
 router.post("/import/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
     try {
-        const response = Spotify.processRawImport(req.body, req.params.username);
+        const response = await Spotify.processRawImport(req.body, req.params.username);
         return res.status(201).json({ response });
     } catch (err) {
         return next(err);

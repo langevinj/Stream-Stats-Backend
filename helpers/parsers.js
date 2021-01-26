@@ -75,8 +75,6 @@ async function bandcampParser(rawData, username){
     let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
     rawArray.splice(endIdx);
 
-    if(rawArray === []) return null
-
     /**trim the raw array down to an array containing strings for each track
      *          each string contains, track title, total streams, complete, partial, and skip stats
      * */

@@ -1,6 +1,8 @@
 "use strict";
 
 const db = require("../db");
+const jsonschema = require("jsonschema");
+const spotifyDataSchema = require("../schemas/spotifyData.json");
 const { crawlSFA } = require("../s/spotifyForArtists/main");
 const { spotifyParser } = require("../helpers/parsers");
 const { ExpressError, BadRequestError } = require("../expressError");
@@ -76,19 +78,25 @@ class Spotify {
             }
 
             let allMonthQueries = [];
+            let monthFails = 0;
             //enter the past 28days data into the DB
             for (let dataset of monthData) {
-                try {
-                    let result = db.query(
-                        `INSERT INTO spotify_running
+                const validator = jsonschema.validate(dataset, spotifyDataSchema);
+                if(!validator.valid){
+                    monthFails++;
+                } else {
+                    try {
+                        let result = db.query(
+                            `INSERT INTO spotify_running
                     (title, streams, listeners, username)
                     VALUES ($1, $2, $3, $4)
                     RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
-                    );
-                    allMonthQueries.push(result);
-                } catch (err) {
-                    throw err;
-                    // throw new Error("Error importing data.");
+                        );
+                        allMonthQueries.push(result);
+                    } catch (err) {
+                        throw err;
+                        // throw new Error("Error importing data.");
+                    }
                 }
             }
 
@@ -96,22 +104,37 @@ class Spotify {
             await Promise.all(allMonthQueries);
 
             let allTimeQueries = [];
+            let allTimeFails = 0;
             //enter the alltime data
             for (let dataset of allTimeData) {
-                try {
-                    let result = db.query(
-                        `INSERT INTO spotify_all_time
+                const validator = jsonschema.validate(dataset, spotifyDataSchema);
+                if(!validator.valid){
+                    allTimeFails++;
+                } else {
+                    try {
+                        let result = db.query(
+                            `INSERT INTO spotify_all_time
                     (title, streams, listeners, username)
                     VALUES ($1, $2, $3, $4)
                     RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
-                    );
-                    allTimeQueries.push(result);
-                } catch (err) {
-                    throw new Error("Error importing data.");
+                        );
+                        allTimeQueries.push(result);
+                    } catch (err) {
+                        throw new Error("Error importing data.");
+                    }
                 }
             }
             //wait for all queries to complete
             await Promise.all(allTimeQueries);
+
+            //handle import errors
+            if(allTimeFails !== 0 && monthFails !== 0){
+                throw new BadRequestError("Error importing Spotify for Artists 28 day and all time data. Try again manually.");
+            } else if (allTimeFails !== 0){
+                throw new BadRequestError("Error importing Spotify for Artists all time data. Try again manually.");
+            } else if (monthFails !== 0){
+                throw new BadRequestError("Error importing Spotify for Artists 28 day data. Try again manually.");
+            }
 
             let response = `The Spotify data has been saved!`
             console.log(response);
@@ -129,24 +152,38 @@ class Spotify {
 
         let allQueries = [];
         let count = 0;
+        let fails = 0;
         let table = range === "alltime" ? 'spotify_all_time' : 'spotify_running'
+        let correctRange = range === "alltime" ? "All time" : "28 days";
+
+        if (!formattedArray.length) {
+            throw new BadRequestError(`Error importing Spotify ${correctRange} data. Please try again.`);
+        }
+
 
         for(let dataset of formattedArray){
-            count++;
-            try {
-                let result = db.query(
-                    `INSERT INTO ${table}
+            const validator = jsonschema.validate(dataset, spotifyDataSchema);
+            if(!validator.valid){
+                fails++
+            } else {
+                count++;
+                try {
+                    let result = db.query(
+                        `INSERT INTO ${table}
                     (title, streams, listeners, username)
                     VALUES ($1, $2, $3, $4)
                     RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
-                );
-                allQueries.push(result);
-            } catch (err) {
-                throw err;
+                    );
+                    allQueries.push(result);
+                } catch (err) {
+                    throw err;
+                }
             }
         }
 
         await Promise.all(allQueries);
+
+        if(fails !== 0) throw new BadRequestError(`Error importing ${fails} lines of Spotify ${correctRange} data. Please try again.`);
 
         let response = `The Spotify data has been saved! ${count} lines processed`
         console.log(response);

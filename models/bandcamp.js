@@ -73,7 +73,7 @@ class Bandcamp {
 
         
         // let response = `The Bandcamp data has been saved! ${count} lines processed`
-        let response = range === "alltime" ? "Bandcamp all time" : "Bandcamp 30 days"
+        let response = range === "alltime" ? "Bandcamp all time" : "Bandcamp 30 days";
         return response;
     }
 

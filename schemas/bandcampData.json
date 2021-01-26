@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "required": [
+        "title",
+        "plays",
+        "complete",
+        "partial",
+        "skip"
+    ],
+    "properties": {
+        "title": {
+            "$id": "#/properties/title",
+            "type": "string",
+            "examples": [
+                "string"
+            ]
+        },
+        "plays": {
+            "$id": "#/properties/plays",
+            "type": "integer"
+        },
+        "complete": {
+            "$id": "#/properties/complete",
+            "type": "integer"
+        },
+        "partial": {
+            "$id": "#/properties/partial",
+            "type": "integer"
+        },
+        "skip": {
+            "$id": "#/properties/skip",
+            "type": "integer"
+        }
+    },
+    "additionalProperties": false
+}

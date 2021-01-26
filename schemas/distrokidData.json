@@ -8,11 +8,11 @@
             "saleMonth": "2020-10-31",
             "store": "Apple Music",
             "title": "I feel fine",
-            "quantity": 5000,
+            "quantity": "5000",
             "releaseType": "Album",
             "paid": "$500",
             "saleCountry": "US",
-            "earnings": 0.007869521
+            "earnings": "0.007869521"
         }
     ],
     "required": [
@@ -59,8 +59,7 @@
         },
         "quantity": {
             "$id": "#/properties/quantity",
-            "type": "integer",
-            "default": 0,
+            "type": "string",
             "examples": [
                 5000
             ]
@@ -88,7 +87,7 @@
         },
         "earnings": {
             "$id": "#/properties/earnings",
-            "type": "number",
+            "type": "string",
             "examples": [
                 0.007869521
             ]

@@ -4,7 +4,7 @@ const { raw } = require("express");
 const fs = require("fs");
 const { distrokidDateConverter } = require('./dates');
 
-//turns each row into a valid object, returns an array containing all rows
+//turns each row into a valid object, returns an array containing all rows, currently cutting off the total and grand total but could change that
 function formatDistrokidData(array){
     return array.map(row => {
         let t = row.split('\t');
@@ -43,7 +43,7 @@ async function distrokidParser(rawData, username){
 
     //remove the end of the page
     let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
-    rawArray.splice(endIdx);
+    rawArray.splice(endIdx - 2);
 
     return formatDistrokidData(rawArray)
 }

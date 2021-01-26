@@ -47,11 +47,13 @@ class Distrokid {
             let allQueries = []
             let count = 0;
             let fails = 0;
+            let failSets = [];
 
             for(let dataset of formattedArray){
                     const validator = jsonschema.validate(dataset, distrokidDataSchema);
                     if(!validator.valid){
                         fails++;
+                        failSets.push(dataset)
                     } else {
                         if (dataset.earnings !== undefined) {
                             let result = db.query(
@@ -78,9 +80,10 @@ class Distrokid {
                     }
             }
 
-            
 
             await Promise.all(allQueries);
+
+            console.log(failSets)
 
             if (fails !== 0) throw new BadRequestError(`Error importing ${fails} distrokid lines. Please try again.`);
 

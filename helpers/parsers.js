@@ -105,7 +105,6 @@ async function bandcampParser(rawData, username){
 
         formattedData.push(tempObject);
     }
-    console.log(formattedData)
 
     return formattedData
 }

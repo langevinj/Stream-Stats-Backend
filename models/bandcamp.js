@@ -1,8 +1,10 @@
 "use strict";
 
 const db = require("../db");
+const jsonschema = require("jsonschema");
 const { bandcampParser } = require('../helpers/parsers');
-const { NotFoundError } = require('../expressError');
+const { NotFoundError, BadRequestError } = require('../expressError');
+const bandcampDataSchema = require("../schemas/bandcampData.json");
 
 /** Functions for bandcamp. */
 
@@ -22,9 +24,10 @@ class Bandcamp {
         let formattedArray = await bandcampParser(page, username);
         let allQueries = [];
         let count = 0;
+        let fails = 0;
+        let correctRange = range === "alltime" ? "All time" : "30 days";
         //designate which table to insert into
         let table = range === "alltime" ? 'bandcamp_all_time' : 'bandcamp_running';
-
 
         if (formattedArray.length) {
             //remove soon to be outdated entries from the users db
@@ -36,10 +39,16 @@ class Bandcamp {
             } catch (err) {
                 throw new Error("Failure to remove old data!");
             }
+        } else {
+            throw new BadRequestError(`Error with the bandcamp data imported for ${correctRange}.`)
         }
 
         //insertion into DB for all time data
         for(let dataset of formattedArray){
+            const validator = jsonschema.validate(dataset, bandcampDataSchema);
+            if(!validator.valid){
+                fails++
+            } else {
             count++;
             try {
                 let result = db.query(
@@ -52,10 +61,17 @@ class Bandcamp {
             } catch (err) {
                 throw new Error("Error importing data.");
             }
+            }
         }
 
         //wait for all insertion to complete 
         await Promise.all(allQueries);
+
+        if(fails !== 0){
+            throw new BadRequestError(`Error importing ${fails} bandcamp lines for the ${correctRange} page. Try again.`);
+        }
+
+        
         let response = `The Bandcamp data has been saved! ${count} lines processed`
         console.log(response);
         return response;

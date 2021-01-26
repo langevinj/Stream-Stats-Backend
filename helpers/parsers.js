@@ -1,5 +1,6 @@
 /**Helper functions for parsing raw pages */
 
+const { raw } = require("express");
 const fs = require("fs");
 const { distrokidDateConverter } = require('./dates');
 
@@ -73,6 +74,8 @@ async function bandcampParser(rawData, username){
     //remove the end of the page
     let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
     rawArray.splice(endIdx);
+
+    if(rawArray === []) return null
 
     /**trim the raw array down to an array containing strings for each track
      *          each string contains, track title, total streams, complete, partial, and skip stats

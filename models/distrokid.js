@@ -22,10 +22,10 @@ class Distrokid {
          *      returns array of objects containing each dataset
         */
         let formattedArray = await distrokidParser(page, username);
-
-        // if(!formattedArray.length){
-        //     throw new Error("The distrokid data you provided was incorrectly formatted. Please try pasting again.")
-        // }
+        
+        if(!formattedArray.length){
+            throw new Error("The distrokid data you provided was incorrectly formatted. Please try pasting again.")
+        }
 
         //remove outdated info from db before inputting new data
         if(formattedArray[0]){
@@ -41,13 +41,13 @@ class Distrokid {
             
         }
 
-        await insertIntoDB(formattedArray);
-
-        async function insertIntoDB(formattedArray){
+        // await insertIntoDB(formattedArray);
+        let fails = 0;
+        // async function insertIntoDB(formattedArray){
             let allQueries = []
             let count = 0;
-            let fails = 0;
-
+            
+        console.log(formattedArray)
             for(let dataset of formattedArray){
                     const validator = jsonschema.validate(dataset, distrokidDataSchema);
                     if(!validator.valid){
@@ -78,15 +78,18 @@ class Distrokid {
                     }
             }
 
-
-            await Promise.all(allQueries);
-
-            if (fails !== 0) throw new BadRequestError(`Error importing ${fails} distrokid lines. Please try again.`);
-
+            await Promise.all(allQueries).then(data => {
+                console.log(count)
+            })
             // let response = `The Distrokid data has been saved! ${count} lines processed.`
-            let response = "Distrokid"
-            return response;
+            
+        // }
+        if (fails !== 0) {
+            throw new BadRequestError(`Error importing ${fails} distrokid lines. Please try again.`)
+        } else {
+            return "Distrokid"
         }
+        
     }
 
     static async getUserDistrokidData(range="alltime", username){

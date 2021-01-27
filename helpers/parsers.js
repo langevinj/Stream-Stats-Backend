@@ -4,7 +4,12 @@ const { raw } = require("express");
 const fs = require("fs");
 const { distrokidDateConverter, getDaysInMonth} = require('./dates');
 
-//turns each row into a valid object, returns an array containing all rows, currently cutting off the total and grand total but could change that
+//** turns each row into a valid object, returns an array containing all rows, currently cutting off the total and grand total but * could change that
+
+/**
+ * 
+ * Currently setup to work with the distrokid csv! Not the page
+ */
 function formatDistrokidData(array){
    let q = array.map(row => row.split('\t'))
    console.log(q)

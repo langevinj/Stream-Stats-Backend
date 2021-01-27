@@ -30,21 +30,21 @@
         },
         "streams": {
             "$id": "#/properties/streams",
-            "type": "string",
+            "type": "integer",
             "examples": [
                 1000
             ]
         },
         "listeners": {
             "$id": "#/properties/listeners",
-            "type": "string",
+            "type": "integer",
             "examples": [
                 956
             ]
         },
         "views": {
             "$id": "#/properties/views",
-            "type": "number",
+            "type": "integer",
             "examples": [
                 405
             ]

@@ -46,8 +46,8 @@ class Distrokid {
         // async function insertIntoDB(formattedArray){
             let allQueries = []
             let count = 0;
-            
-        console.log(formattedArray)
+
+        console.log(formattedArray[formattedArray.length - 1])
             for(let dataset of formattedArray){
                     const validator = jsonschema.validate(dataset, distrokidDataSchema);
                     if(!validator.valid){

@@ -2,20 +2,27 @@
 
 const { raw } = require("express");
 const fs = require("fs");
-const { distrokidDateConverter } = require('./dates');
+const { distrokidDateConverter, getDaysInMonth} = require('./dates');
 
 //turns each row into a valid object, returns an array containing all rows, currently cutting off the total and grand total but could change that
 function formatDistrokidData(array){
+   let q = array.map(row => row.split('\t'))
+   console.log(q)
     return array.map(row => {
         let t = row.split('\t');
         
         if(t.length < 6) return t;
 
         //converter the dates into the correct format for SQL insertion
-        let validReportingMonth = distrokidDateConverter(t[0]);
-        let validSaleMonth = distrokidDateConverter(t[1]);
+        // let validReportingMonth = distrokidDateConverter(t[0]);
+        // let validSaleMonth = distrokidDateConverter(t[1]);
+        const dateVals = t[1].split("-");
+        const month = parseInt(dateVals[1]);
+        const year = parseInt(dateVals[0]);
+        const lastDayOfMonth = getDaysInMonth(month, year);
 
-        return { "reportingMonth": validReportingMonth, "saleMonth": validSaleMonth, "store": t[2], "title": t[4], "quantity": t[5], "releaseType": t[6], "paid": t[7], "saleCountry": t[8], "earnings": t[9] }
+        //paid said to 0 for now
+        return { "reportingMonth": t[0], "saleMonth": `${t[1]}-${lastDayOfMonth}`, "store": t[2], "title": t[4], "quantity": t[7], "releaseType": t[9], "paid": "0", "saleCountry": t[10], "earnings": t[12] }
     });
 }
 
@@ -23,8 +30,8 @@ function formatDistrokidData(array){
 async function distrokidParser(rawData, username){  
 
     //string identifiers of the start/end of the table
-    const tableStart = 'REPORTING MONTH';
-    const tableEnd = 'Some info about earnings'
+    const tableStart = 'Earnings (';
+    // const tableEnd = 'Some info about earnings'
 
     //write a new .txt file with the raw data
     fs.writeFileSync(`./rawPages/distrokid-${username}.txt`, rawData, {'encoding': 'utf8', 'flag': 'w'}, (err) => {
@@ -42,8 +49,8 @@ async function distrokidParser(rawData, username){
     rawArray.splice(0, startIdx + 1);
 
     //remove the end of the page
-    let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
-    rawArray.splice(endIdx - 2);
+    // let endIdx = rawArray.findIndex(line => line.includes(tableEnd));
+    // rawArray.splice(endIdx - 2);
 
     return formatDistrokidData(rawArray)
 }

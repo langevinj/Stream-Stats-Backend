@@ -45,13 +45,25 @@ class Spotify {
 
         //when security is added will have to decrypt password here
         // let unhashedPwd =
+
+        async function crawlForData(email, password, username){
+            try{
+                let crawlRes = await crawlSFA({ email, password, username });
+                if (crawlRes === "LOGIN ERROR") throw new BadRequestError("Invalid email or password.");
+                return crawlRes
+            } catch (error){
+                throw new BadRequestError("Error gathering data from Spotify for Artists. Please try again or manually paste the data.");
+            }
+        }
+
+        const crawlResponse = await crawlForData(email, password, username);
+        
         
         //initiate the crawl
-            let crawlRes = await crawlSFA({ email, password, username });
-            if(crawlRes === "LOGIN ERROR") throw new BadRequestError("Invalid email or password.");
+            
 
             // /parse the returned data
-            let data = JSON.parse(crawlRes);
+            let data = JSON.parse(crawlResponse);
             let monthData = data['30days'];
             let allTimeData = data.allTime;
 

@@ -5,16 +5,15 @@ const jsonschema = require("jsonschema");
 const spotifyDataSchema = require("../schemas/spotifyData.json");
 const { crawlSFA } = require("../s/spotifyForArtists/main");
 const { spotifyParser } = require("../helpers/parsers");
-const { ExpressError, BadRequestError } = require("../expressError");
+const { BadRequestError } = require("../expressError");
 
 /** Functions for Spotify */
 
 class Spotify {
 
-
-    /**Save a users Spotify credentials */
+    /**Save a users Spotify credentials. Currently not in use */
     static async saveUserCredentials({ email, password, username }){
-        //revisit hasing password when know how to decrypt
+
         // const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
         const result = await db.query(
             `INSERT INTO spotify_credentials
@@ -32,135 +31,93 @@ class Spotify {
         return user;
     }
 
+    //crawl the user's Spotify for Artists account and save data
     static async crawlAndSave(email, password, username){
-        //get the email and hashedPassword for the specified user
-        // const res = await db.query(
-        //     `SELECT email, password
-        //     FROM spotify_credentials
-        //     WHERE username=$1`, [username]
-        // );
+        //Once the application is saving a user's credentials, that information should be referenced here
 
-        // let password = res.rows[1].password;
-        // let email = res.rows[0].email;
-
-        //when security is added will have to decrypt password here
-        // let unhashedPwd =
-
+        //helper function to call the actual crawl and catch misc. errors
         async function crawlForData(email, password, username){
             try{
-                let crawlRes = await crawlSFA({ email, password, username });
+                const crawlRes = await crawlSFA({ email, password, username });
                 if (crawlRes === "LOGIN ERROR") throw new BadRequestError("Invalid email or password.");
                 return crawlRes
             } catch (error){
+                console.log(error);
                 throw new BadRequestError("Error gathering data from Spotify for Artists. Please try again or manually paste the data.");
             }
         }
 
+        //call the initial crawl and save the response
         const crawlResponse = await crawlForData(email, password, username);
         
         
-        //initiate the crawl
-            
+        //parse the data returned from the crawl
+        const parsedData = JSON.parse(crawlResponse);
+        const monthData = parsedData['30days'];
+        const allTimeData = parsedData.allTime;
 
-            // /parse the returned data
-            let data = JSON.parse(crawlResponse);
-            let monthData = data['30days'];
-            let allTimeData = data.allTime;
-
-            //remove old data from the tables before importing new data
-            if(monthData){
-                try {
-                    let res = await db.query(
-                        `DELETE FROM spotify_running
-                        WHERE username = $1`, [username]
-                    );
-                } catch (err){
-                    throw new Error("Unable to delete old data");
-                }
+        //helper function for removing a user's older data from the table
+        async function removeOldData(table, username){
+            try {
+                const res = await db.query(
+                    `DELETE FROM ${table}
+                    WHERE username = $1`, [username]
+                );
+            } catch (err) {
+                throw new Error("Unable to delete old data.");
             }
+        }
 
-            if(allTimeData){
-                try {
-                    let res = await db.query(
-                        `DELETE FROM spotify_all_time
-                        WHERE username = $1`, [username]
-                    );
-                } catch (err) {
-                    throw new Error("Unable to delete old data");
-                }  
-            }
+        //prepare table for new data import by deleting old data
+        if(monthData) await removeOldData('spotify_running', username);
+        if(allTimeData) await removeOldData('spotify_all_time', username);
 
-            let allMonthQueries = [];
-            let monthFails = 0;
-            let monthFailSet = [];
-            //enter the past 28days data into the DB
-            for (let dataset of monthData) {
+        //helper function for adding data to the spotify tables
+        async function addDataToDb(data, table, username){
+            let fails = 0;
+            const allQueries = [];
+
+            for(let dataset of data){
                 const validator = jsonschema.validate(dataset, spotifyDataSchema);
-                if(!validator.valid){
-                    monthFails++;
-                    throw new Error(`${dataset} failed`)
+                if(!validator){
+                    fails++;
                 } else {
                     try {
-                        let result = db.query(
-                            `INSERT INTO spotify_running
-                    (title, streams, listeners, username)
-                    VALUES ($1, $2, $3, $4)
-                    RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
+                        const result = db.query(
+                            `INSERT INTO ${table}
+                            (title, streams, listeners, username)
+                            VALUES ($1, $2, $3, $4)
+                            RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
                         );
-                        allMonthQueries.push(result);
+                        allQueries.push(result);
                     } catch (err) {
                         throw err;
-                        // throw new Error("Error importing data.");
                     }
                 }
             }
 
-            //wait for the month queries to finish
-            await Promise.all(allMonthQueries);
+            //wait for all the queries to finish
+            await Promise.all(allQueries);
 
-            console.log(`Month fails: ${monthFailSet}`);
+            return fails;
+        }
 
-            let allTimeQueries = [];
-            let allTimeFails = 0;
-            let allFailSet = [];
-            //enter the alltime data
-            for (let dataset of allTimeData) {
-                const validator = jsonschema.validate(dataset, spotifyDataSchema);
-                if(!validator.valid){
-                    console.log(`**************************************`)
-                    console.log(`FAILED YEAR ${dataset}`)
-                    allTimeFails++;
-                    allFailSet.push(dataset)
-                } else {
-                    try {
-                        let result = db.query(
-                            `INSERT INTO spotify_all_time
-                    (title, streams, listeners, username)
-                    VALUES ($1, $2, $3, $4)
-                    RETURNING username`, [dataset.title, parseInt(dataset.streams) || 0, parseInt(dataset.listeners) || 0, username]
-                        );
-                        allTimeQueries.push(result);
-                    } catch (err) {
-                        throw new Error("Error importing data.");
-                    }
-                }
-            }
-            //wait for all queries to complete
-            await Promise.all(allTimeQueries);
+        //add both sets of data to the DB
+        const monthInsertResponse = await addDataToDb(monthData, 'spotify_running', username);
+        const alltimeInsertResponse = await addDataToDb(allTimeData, 'spotify_all_time', username);
 
-            // console.log(`All fail set is: ${allFailSet}`)
 
-            //handle import errors
-            if(allTimeFails !== 0 && monthFails !== 0){
-                throw new BadRequestError("Error importing Spotify for Artists 28 day and all time data. Try again manually.");
-            } else if (allTimeFails !== 0){
-                throw new BadRequestError("Error importing Spotify for Artists all time data. Try again manually.");
-            } else if (monthFails !== 0){
-                throw new BadRequestError("Error importing Spotify for Artists 28 day data. Try again manually.");
-            }
+        //handle import errors
+        if(alltimeInsertResponse!== 0 && monthInsertResponse !== 0){
+            throw new BadRequestError("Error importing Spotify for Artists 28 day and all time data. Try again manually.");
+        } else if (alltimeInsertResponse !== 0){
+            throw new BadRequestError("Error importing Spotify for Artists all time data. Try again manually.");
+        } else if (monthInsertResponse !== 0){
+            throw new BadRequestError("Error importing Spotify for Artists 28 day data. Try again manually.");
+        }
 
-            let response = "Spotify all time and 28days from login"
-            return response;
+        //if everything goes well, return the success message
+        return "Spotify all time and 28days from login";
 }
 
 

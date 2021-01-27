@@ -17,9 +17,9 @@ async function crawlSFA({ email, password, username } ) {
     });
 
     const page = await browser.newPage();
-    page.on('dialog', async dialog => {
-            console.log(dialog.message());
-    });
+    // page.on('dialog', async dialog => {
+    //         console.log(dialog.message());
+    // });
 
     await page.setExtraHTTPHeaders({
         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8'
@@ -47,9 +47,8 @@ async function crawlSFA({ email, password, username } ) {
     await page.type('#login-username', email);
     await page.type('#login-password', password);
 
-
     await page.click('#login-button');
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
     if (page.url() === 'https://accounts.spotify.com/en/login?continue=https:%2F%2Fartists.spotify.com%2F') {
         browser.close();
         return "LOGIN ERROR";
@@ -58,8 +57,6 @@ async function crawlSFA({ email, password, username } ) {
     }
     
     page.waitForTimeout(2000);
-
-    page.waitForTimeout(3000);
 
     //format the url properly to go to the correctly filtered page
     let filterIdx = await page.url().search('home');

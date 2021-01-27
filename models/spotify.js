@@ -48,11 +48,12 @@ class Spotify {
         
         //initiate the crawl
             let crawlRes = await crawlSFA({ email, password, username });
-            if(crawlRes === "LOGIN ERROR") throw new BadRequestError("Invalid email or password.")
+            if(crawlRes === "LOGIN ERROR") throw new BadRequestError("Invalid email or password.");
+
             // /parse the returned data
             let data = JSON.parse(crawlRes);
             let monthData = data['30days'];
-            let allTimeData = data['allTime'];
+            let allTimeData = data.allTime;
 
             //remove old data from the tables before importing new data
             if(monthData){
@@ -79,11 +80,13 @@ class Spotify {
 
             let allMonthQueries = [];
             let monthFails = 0;
+            let monthFailSet = [];
             //enter the past 28days data into the DB
             for (let dataset of monthData) {
                 const validator = jsonschema.validate(dataset, spotifyDataSchema);
                 if(!validator.valid){
                     monthFails++;
+                    throw new Error(`${dataset} failed`)
                 } else {
                     try {
                         let result = db.query(
@@ -103,13 +106,19 @@ class Spotify {
             //wait for the month queries to finish
             await Promise.all(allMonthQueries);
 
+            console.log(`Month fails: ${monthFailSet}`);
+
             let allTimeQueries = [];
             let allTimeFails = 0;
+            let allFailSet = [];
             //enter the alltime data
             for (let dataset of allTimeData) {
                 const validator = jsonschema.validate(dataset, spotifyDataSchema);
                 if(!validator.valid){
+                    console.log(`**************************************`)
+                    console.log(`FAILED YEAR ${dataset}`)
                     allTimeFails++;
+                    allFailSet.push(dataset)
                 } else {
                     try {
                         let result = db.query(
@@ -127,6 +136,8 @@ class Spotify {
             //wait for all queries to complete
             await Promise.all(allTimeQueries);
 
+            // console.log(`All fail set is: ${allFailSet}`)
+
             //handle import errors
             if(allTimeFails !== 0 && monthFails !== 0){
                 throw new BadRequestError("Error importing Spotify for Artists 28 day and all time data. Try again manually.");
@@ -136,7 +147,7 @@ class Spotify {
                 throw new BadRequestError("Error importing Spotify for Artists 28 day data. Try again manually.");
             }
 
-            let response = "Spotify All time and 28days from login"
+            let response = "Spotify all time and 28days from login"
             return response;
 }
 
@@ -155,6 +166,7 @@ class Spotify {
         let allQueries = [];
         let count = 0;
         let fails = 0;
+        let failedSets = [];
         let table = range === "alltime" ? 'spotify_all_time' : 'spotify_running'
         let correctRange = range === "alltime" ? "All time" : "28 days";
 
@@ -162,11 +174,11 @@ class Spotify {
             throw new BadRequestError(`Error importing Spotify ${correctRange} data. Please try again.`);
         }
 
-
         for(let dataset of formattedArray){
             const validator = jsonschema.validate(dataset, spotifyDataSchema);
             if(!validator.valid){
                 fails++
+                failedSets.push(dataset)
             } else {
                 count++;
                 try {
@@ -184,6 +196,8 @@ class Spotify {
         }
 
         await Promise.all(allQueries);
+
+        console.log(failedSets)
 
         if(fails !== 0) throw new BadRequestError(`Error importing ${fails} lines of Spotify ${correctRange} data. Please try again.`);
 

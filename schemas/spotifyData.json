@@ -10,14 +10,15 @@
             "title": "testtitle",
             "streams": 1000,
             "listeners": 956,
-            "saves": 405
+            "saves": 405,
+            "views": 0
         }
     ],
     "required": [
         "title",
         "streams",
-        "listeners",
-        "saves"
+        "listeners"
+        
     ],
     "properties": {
         "title": {
@@ -29,16 +30,23 @@
         },
         "streams": {
             "$id": "#/properties/streams",
-            "type": "integer",
+            "type": "string",
             "examples": [
                 1000
             ]
         },
         "listeners": {
             "$id": "#/properties/listeners",
-            "type": "integer",
+            "type": "string",
             "examples": [
                 956
+            ]
+        },
+        "views": {
+            "$id": "#/properties/views",
+            "type": "number",
+            "examples": [
+                405
             ]
         },
         "saves": {
@@ -48,6 +56,7 @@
                 405
             ]
         }
+        
     },
-    "additionalProperties": false
+    "additionalProperties": true
 }

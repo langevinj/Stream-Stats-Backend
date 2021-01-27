@@ -4,7 +4,6 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const { response } = require('express');
-const { deserialize } = require('v8');
 
 async function crawlSFA({ email, password, username } ) {
 
@@ -56,14 +55,14 @@ async function crawlSFA({ email, password, username } ) {
         await page.waitForNavigation({ waitUntil: 'networkidle2' });
     }
     
-    page.waitForTimeout(2000);
+    // page.waitForTimeout(1000);
 
     //format the url properly to go to the correctly filtered page
     let filterIdx = await page.url().search('home');
     let filteredUrl = await page.url().substring(0, filterIdx);
     console.log(`filteredURL is ${filteredUrl}`)
 
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
     // page.goto(`${filteredUrl}music/songs?time-filter=28days`);
 
     // await page.waitForTimeout(1000);
@@ -91,13 +90,8 @@ async function crawlSFA({ email, password, username } ) {
 
         return scrapedData;
     });
-    
-    // await page.waitForTimeout(1000);
-    //write scraped data to a JSON file, if there is an error log it
-    // await fs.writeFile(`./spotifyData/spotify-${username}-30days.json`, JSON.stringify(data), {flag: "w" }, err => err ? console.log(err): null);
-    // console.log("30day stats written");
 
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
 
     //visit all time stats
     await Promise.all([

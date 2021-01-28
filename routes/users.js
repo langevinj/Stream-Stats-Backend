@@ -58,4 +58,20 @@ router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, nex
     }
 });
 
+/** GET /allSongs/[username] => {songs: [...]} 
+ * 
+ * Returns an array of all unique songs the user has in the DB
+ * 
+ * Authorization requried: admin or same user
+*/
+
+router.get("/allSongs/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
+    try {
+        const songs = await User.getAllSongs(req.params.username);
+        return res.json({songs});
+    } catch (err) {
+        return next(err);
+    }
+});
+
 module.exports = router;

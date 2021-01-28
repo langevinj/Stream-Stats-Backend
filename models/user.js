@@ -109,6 +109,25 @@ class User {
 
         return user;
     }
+
+    /** Given the username return all songs the user has in their data */
+    static async getAllSongs(username){
+        const songRes = await db.query(
+            `SELECT title FROM distrokid WHERE username = $1
+            UNION
+            SELECT title FROM bandcamp_all_time WHERE username = $1
+            UNION
+            SELECT title FROM bandcamp_running WHERE username = $1
+            UNION
+            SELECT title FROM spotify_all_time WHERE username = $1
+            UNION
+            SELECT title FROM spotify_running WHERE username = $1`, [username]
+        );
+
+        if(!songRes.rows) return [];
+
+        return songRes.rows;
+    }
 }
 
 module.exports = User;

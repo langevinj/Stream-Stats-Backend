@@ -126,7 +126,7 @@ class User {
 
         if(!songRes.rows) return [];
 
-        return songRes.rows;
+        return Object.values(songRes.rows).map(d => d);
     }
 }
 

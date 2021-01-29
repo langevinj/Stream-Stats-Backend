@@ -131,3 +131,16 @@ describe("get", function() {
         }
     });
 });
+
+/*********************getAllSongs */
+
+describe("getAllSongs", function() {
+    test("works", async function() {
+        let allSongs = await User.getAllSongs('u1');
+        expect(allSongs).toEqual([
+            {"title": "song1"},
+            {"title": "song3"},
+            {"title": "song2"}
+        ]);
+    });
+});

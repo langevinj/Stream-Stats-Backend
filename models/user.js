@@ -124,7 +124,7 @@ class User {
             SELECT title FROM spotify_running WHERE username = $1`, [username]
         );
 
-        if(!songRes.rows) return [];
+        if(!songRes.rows.length) return [];
 
         return Object.values(songRes.rows).map(d => d);
     }

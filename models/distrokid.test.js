@@ -28,4 +28,12 @@ describe("getUserDistrokidData", function() {
             { "title": 'song1', "store": 'applemusic', "plays": "15", "profit": "0.0097586308"}
         ]);
     });
+
+    test("throws NotFoundError if the user doesn't have data", async function() {
+        try {
+            let data = await Distrokid.getUserDistrokidData('u2');
+        } catch (err) {
+            expect(err instanceof NotFoundError);
+        }
+    });
 });

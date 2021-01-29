@@ -32,7 +32,7 @@ router.post("/import/:username", ensureCorrectUserOrAdmin, async function(req, r
 
 router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
     try {
-        const response = await Distrokid.getUserDistrokidData(req.body.range, req.params.username);
+        const response = await Distrokid.getUserDistrokidData(req.params.username, req.body.range);
         return res.status(200).json({ response: response });
     } catch (err) {
         return next(err);

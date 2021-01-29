@@ -5,7 +5,7 @@
 const request = require("supertest");
 
 const app = require("../app");
-const { UnauthorizedError, BadRequestError } = require("../expressError");
+const { UnauthorizedError, BadRequestError, NotFoundError } = require("../expressError");
 
 const {
     commonBeforeAll,
@@ -67,6 +67,56 @@ describe("POST /distrokid/import/:username", function() {
         } catch (err) {
             expect(err instanceof BadRequestError);
             expect(err.message).toEqual("The distrokid data you provided was incorrectly formatted. Please try copy and pasting again.");
+        }
+    });
+});
+
+/********************************GET /distrokid/:username */
+
+describe("GET /distrokid/:username", function() {
+    it("gets the data for a user", async function() {
+        const resp = await request(app)
+                         .get("/distrokid/u1")
+                         .send({ "range": "alltime"})
+                         .set("authorization", `Bearer ${u1Token}`);
+        expect(resp.statusCode).toEqual(200);
+        expect(resp.body).toEqual({ "response": [
+            { "title": "song1", "store": "applemusic", "plays": "15", "profit": "0.0097586308"}
+        ]})
+    });
+
+    it("works for admin", async function () {
+        const resp = await request(app)
+            .get("/distrokid/u1")
+            .send({ "range": "alltime" })
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toEqual(200);
+        expect(resp.body).toEqual({
+            "response": [
+                { "title": "song1", "store": "applemusic", "plays": "15", "profit": "0.0097586308" }
+            ]
+        })
+    });
+
+    it("unath for non-admin", async function() {
+        try{
+            const resp = await request(app)
+                .get("/distrokid/u1")
+                .send({ "range": "alltime" })
+                .set("authorization", `Bearer ${u2Token}`);
+        } catch (err) {
+            expect(err instanceof UnauthorizedError);
+        }
+    });
+
+    it("notfound if user doesn't exist", async function() {
+        try {
+            const resp = await request(app)
+                .get("/distrokid/u3")
+                .send({ "range": "alltime" })
+                .set("authorization", `Bearer ${adminToken}`);
+        } catch (err) {
+            expect(err instanceof NotFoundError);
         }
     });
 });

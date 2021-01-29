@@ -108,3 +108,26 @@ describe("register", function() {
         }
     });
 });
+
+/**********************get */
+
+describe("get", function() {
+    test("works", async function () {
+        let user = await User.get("u1");
+        expect(user).toEqual({
+            username: "u1",
+            bandName: null,
+            email: "u1@email.com",
+            isAdmin: false
+        });
+    });
+
+    test("not found if no such user", async function () {
+        try {
+            await User.get("nope");
+            fail();
+        } catch (err) {
+            expect(err instanceof NotFoundError).toBeTruthy();
+        }
+    });
+});

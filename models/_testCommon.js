@@ -36,7 +36,21 @@ async function commonBeforeAll() {
 
     await db.query(`
         INSERT INTO distrokid(reporting_month, sale_month, store, title, quantity, release_type, sale_country, earnings, username)
-        VALUES ('2019-10-24', '2019-09-30', 'applemusic', 'song1', $1, 'Song', 'US', $2, 'u1')`, [15, 0.0097586308])
+        VALUES ('2019-10-24', '2019-09-30', 'applemusic', 'song1', $1, 'Song', 'US', $2, 'u1')`, [15, 0.0097586308]);
+
+    await db.query(`
+        INSERT INTO spotify_all_time(title, streams, username)
+        VALUES ('song1', $1, 'u1'),
+                ('song2', $2, 'u1'),
+                ('song3', $3, 'u1'),
+                ('song4', $4, 'u2')`, [1400, 2000, 50, 300]);
+
+    await db.query(`
+        INSERT INTO spotify_running(title, streams, username)
+        VALUES ('song1', $1, 'u1'),
+                ('song2', $2, 'u1'),
+                ('song3', $3, 'u1'),
+                ('song4', $4, 'u2')`, [200, 300, 50, 100]);
 }
 
 async function commonBeforeEach() {

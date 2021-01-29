@@ -74,3 +74,43 @@ describe("POST /auth/token", function() {
         expect(resp.statusCode).toEqual(400);
     });
 });
+
+/************************************ POST /auth/register */
+
+describe("POST /auth/register", function() {
+    test("works for anon", async function () {
+        const resp = await request(app)
+            .post("/auth/register")
+            .send({
+                username: "new",
+                password: "password",
+                email: "new@email.com",
+                band_name: "testband"
+            });
+        expect(resp.statusCode).toEqual(201);
+        expect(resp.body).toEqual({
+            "token": expect.any(String),
+        });
+    });
+
+    test("bad request with missing fields", async function () {
+        const resp = await request(app)
+            .post("/auth/register")
+            .send({
+                username: "new",
+            });
+        expect(resp.statusCode).toEqual(400);
+    });
+
+    test("bad request with invalid data", async function () {
+        const resp = await request(app)
+            .post("/auth/register")
+            .send({
+                username: "new",
+                band_name: "newband",
+                password: "password",
+                email: "not-an-email",
+            });
+        expect(resp.statusCode).toEqual(400);
+    });
+});

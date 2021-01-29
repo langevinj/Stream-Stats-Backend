@@ -22,7 +22,7 @@ router.post("/import/:username", ensureCorrectUserOrAdmin, async function (req, 
     }
 });
 
-/**GET /:username { range } => {[title, plays, complete, partial, skip], ...}
+/**GET /:username/:range { range } => {[title, plays, complete, partial, skip], ...}
  *      get bandcamp data for user with username
  * 
  * Authorization required: correct user or admin

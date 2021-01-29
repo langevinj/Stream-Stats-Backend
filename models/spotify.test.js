@@ -4,8 +4,7 @@
  *      Test suit for the Spotify model.
  */
 
-const db = require("../db");
-const { NotFoundError, BadRequestError } = require('../expressError');
+const { NotFoundError } = require('../expressError');
 const Spotify = require("./spotify.js");
 const {
     commonBeforeAll,

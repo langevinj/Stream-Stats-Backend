@@ -92,7 +92,7 @@ class Distrokid {
         
     }
 
-    static async getUserDistrokidData(range="alltime", username){
+    static async getUserDistrokidData(username, range="alltime"){
         const userRes = await db.query(
             `SELECT username, is_admin as "isAdmin"
             FROM users

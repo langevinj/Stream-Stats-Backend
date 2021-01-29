@@ -7,7 +7,7 @@ async function commonBeforeAll() {
     await db.query("DELETE FROM users");
     await db.query("DELETE FROM bandcamp_all_time");
     await db.query("DELETE FROM bandcamp_running");
-    // await db.query("DELETE FROM distrokid");
+    await db.query("DELETE FROM distrokid");
     // await db.query("DELETE FROM spotify_all_time");
     // await db.query("DELETE FROM spotify_running");
     
@@ -33,6 +33,10 @@ async function commonBeforeAll() {
                ('song2', $2, 'u1'),
                ('song3', $3, 'u2')`,
         [15, 25, 55]);
+
+    await db.query(`
+        INSERT INTO distrokid(reporting_month, sale_month, store, title, quantity, release_type, sale_country, earnings, username)
+        VALUES ('2019-10-24', '2019-09-30', 'applemusic', 'song1', $1, 'Song', 'US', $2, 'u1')`, [15, 0.0097586308])
 }
 
 async function commonBeforeEach() {

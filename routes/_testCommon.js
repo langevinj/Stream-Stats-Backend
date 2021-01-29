@@ -1,7 +1,8 @@
-const bcrypt = require("bcrypt");
+"use strict";
 
 const db = require("../db.js");
-const { BCRYPT_WORK_FACTOR } = require("../config");
+const User = require("../models/user");
+const { createToken } = require("../helpers/tokens");
 
 async function commonBeforeAll() {
     await db.query("DELETE FROM users");
@@ -10,21 +11,34 @@ async function commonBeforeAll() {
     await db.query("DELETE FROM distrokid");
     await db.query("DELETE FROM spotify_all_time");
     await db.query("DELETE FROM spotify_running");
-    
-    await db.query(`
-        INSERT INTO users(username, password, email)
-        VALUES ('u1', $1, 'u1@email.com'),
-               ('u2', $2, 'u2@email.com')`,
-        [
-            await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
-            await bcrypt.hash("password2", BCRYPT_WORK_FACTOR)
-        ]);
+
+    await User.register({
+        username: "u1",
+        email: "user1@user.com",
+        password: "password1",
+        bandName: "band1",
+        isAdmin: false
+    });
+    await User.register({
+        username: "u2",
+        email: "user2@user.com",
+        password: "password2",
+        bandName: "band2",
+        isAdmin: false
+    });
+    await User.register({
+        username: "u3",
+        email: "user3@user.com",
+        password: "password3",
+        bandName: "band3",
+        isAdmin: false
+    });
 
     await db.query(`
         INSERT INTO bandcamp_all_time(title, plays, username)
         VALUES ('song1', $1, 'u1'),
                ('song2', $2, 'u1'),
-               ('song3', $3, 'u2')`, 
+               ('song3', $3, 'u2')`,
         [100, 200, 300]);
 
     await db.query(`
@@ -61,13 +75,20 @@ async function commonAfterEach() {
     await db.query("ROLLBACK");
 }
 
-async function commonAfterAll(){
+async function commonAfterAll() {
     await db.end();
 }
+
+const u1Token = createToken({ username: "u1", isAdmin: false });
+const u2Token = createToken({ username: "u2", isAdmim: false });
+const adminToken = createToken({ username: "admin", isAdmin: true });
 
 module.exports = {
     commonBeforeAll,
     commonBeforeEach,
     commonAfterEach,
-    commonAfterAll
+    commonAfterAll,
+    u1Token,
+    u2Token,
+    adminToken,
 };

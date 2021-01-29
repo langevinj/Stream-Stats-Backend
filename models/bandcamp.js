@@ -10,30 +10,25 @@ const bandcampDataSchema = require("../schemas/bandcampData.json");
 
 class Bandcamp {
 
-    //parse the raw data from the user
+    //Parse the raw data from the user.
     static async processRawImport(data, username) {
         const { page, range } = data;
-        if(!page){
-            // console.log(`No data provided for bandcamp ${range}`);
-            // return `No data provided for bandcamp ${range}`
-            return
-        } 
+        if(!page) return;
 
-        /**call helper function to format all the data
-         *      returns array of objects containing each dataset
+        /**Call helper function to format all the data.
+         *      returns: array of objects containing each dataset.
         */
-        let formattedArray = await bandcampParser(page, username);
+        const formattedArray = await bandcampParser(page, username);
         let allQueries = [];
         let count = 0;
         let fails = 0;
-        let correctRange = range === "alltime" ? "All time" : "30 days";
-        //designate which table to insert into
-        let table = range === "alltime" ? 'bandcamp_all_time' : 'bandcamp_running';
-
+        const correctRange = range === "alltime" ? "All time" : "30 days";
+        const table = range === "alltime" ? 'bandcamp_all_time' : 'bandcamp_running';
+        
         if (formattedArray.length) {
-            //remove soon to be outdated entries from the users db
+            //Remove soon to be outdated entries from the users db.
             try {
-                let result = await db.query(
+                const result = await db.query(
                     `DELETE FROM ${table}
                     WHERE username = $1`, [username]
                 );
@@ -41,44 +36,46 @@ class Bandcamp {
                 throw new Error("Failure to remove old data!");
             }
         } else {
-            throw new BadRequestError(`Error with the bandcamp data imported for ${correctRange}.`)
+            throw new BadRequestError(`Error with the bandcamp data imported for ${correctRange}.`);
         }
 
-        //insertion into DB for all time data
+        //Insert the new data into the DB.
         for(let dataset of formattedArray){
             const validator = jsonschema.validate(dataset, bandcampDataSchema);
             if(!validator.valid){
-                fails++
+                fails++;
             } else {
-            count++;
-            try {
-                let result = db.query(
-                    `INSERT INTO ${table}
-                    (title, plays, complete, partial, skip, username)
-                    VALUES ($1, $2, $3, $4, $5, $6)
-                    RETURNING username`, [dataset.title, dataset.plays, dataset.complete, dataset.partial, dataset.skip, username]
-                );
-                allQueries.push(result);
-            } catch (err) {
-                throw new Error("Error importing data.");
-            }
+                count++;
+                try {
+                    let result = db.query(
+                        `INSERT INTO ${table}
+                        (title, plays, complete, partial, skip, username)
+                        VALUES ($1, $2, $3, $4, $5, $6)
+                        RETURNING username`, [dataset.title, dataset.plays, dataset.complete, dataset.partial, dataset.skip, username]
+                    );
+                    allQueries.push(result);
+                } catch (err) {
+                    throw new Error("Error importing data.");
+                }
             }
         }
 
-        //wait for all insertion to complete 
+        //Wait for all insertions to complete.
         await Promise.all(allQueries);
 
+        //If there are any fails in the, throw an error.
         if(fails !== 0){
-            throw new BadRequestError(`Error importing ${fails} bandcamp lines for the ${correctRange} page. Try again.`);
+            throw new BadRequestError(`Error importing ${fails} bandcamp lines for the ${correctRange} page. Please recopy the page and try again.`);
         }
 
-        
         // let response = `The Bandcamp data has been saved! ${count} lines processed`
-        let response = range === "alltime" ? "Bandcamp all time" : "Bandcamp 30 days";
+        const response = range === "alltime" ? "Bandcamp all time" : "Bandcamp 30 days";
         return response;
     }
 
+    /**Get the Bandcamp data associate with a particular user. */
     static async getUserBandcampData(range="alltime", username){
+        //Check that a user with the given username exists, if not throw an error.
         const userRes = await db.query(
             `SELECT username, is_admin as "isAdmin"
             FROM users
@@ -86,9 +83,7 @@ class Bandcamp {
         );
 
         const user = userRes.rows[0];
-
         if(!user) throw new NotFoundError(`No user: ${username}`);
-
 
         const table = range === "alltime" ? 'bandcamp_all_time' : 'bandcamp_running';
 

@@ -9,10 +9,10 @@ const Distrokid = require("../models/distrokid");
 
 const router = express.Router();
 
-/** POST /rawImport { page } => { response }
+/** POST /import/:username { page } => { response }
  *          take raw page data from the user, parse and save data to the DB
  * 
- * Authorization required: logged in
+ * Authorization required: correct user or admin
   */
  
 router.post("/import/:username", ensureCorrectUserOrAdmin, async function(req, res, next) {

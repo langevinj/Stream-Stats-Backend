@@ -33,7 +33,7 @@ class Bandcamp {
                     WHERE username = $1`, [username]
                 );
             } catch (err) {
-                throw new Error("Failure to remove old data!");
+                throw new BadRequestError("Failure to remove old data!");
             }
         } else {
             throw new BadRequestError(`Error with the bandcamp data imported for ${correctRange}.`);

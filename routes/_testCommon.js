@@ -83,6 +83,58 @@ const u1Token = createToken({ username: "u1", isAdmin: false });
 const u2Token = createToken({ username: "u2", isAdmim: false });
 const adminToken = createToken({ username: "admin", isAdmin: true });
 
+const bandcampMonthTestData = `No file chosen
+Upload Custom Header
+975 pixels wide, 40 - 180 pixels tall, .jpg, .gif or.png, 2mb max
+Plays Sales Sources Map
+all - time 60 days 30 days 7 days today defender
+December 31, 2020 - January 29, 202110 plays
+Dec 31 '20Jan 29 '21Dec 25Dec 1Dec 16Jan 1Jan 162110
+track top ten / all	plays		complete partial skip in Bandcamp from embeds
+Total plays	10
+1 	 3 	 6
+10
+1.
+Song1	2
+2
+2
+2.
+Song2	1		
+1
+1	
+3.	
+Song3	1		
+1
+1	
+4.	
+Song4	1		
+1		
+1	
+5.	
+Song5	1		
+1
+1	
+6.	
+Song6	1		
+1
+1	
+7.	
+Song7	1		
+1
+1	
+8.	
+Song8	1		
+ 1	
+1	
+9.	
+Song9	1		
+1
+1	
+A “complete” play means the track was played past the 90 % mark.A “partial” play means the track was played past the 10 % mark, but stopped before the 90 % mark.A “skip” means the track was stopped before the 10 % mark.
+Your own plays(while logged in) don’t count toward your stats.
+Stats are calculated based on Coordinated Universal Time(UTC).
+terms of use privacy copyright policy help`
+
 module.exports = {
     commonBeforeAll,
     commonBeforeEach,
@@ -91,4 +143,5 @@ module.exports = {
     u1Token,
     u2Token,
     adminToken,
+    bandcampMonthTestData
 };

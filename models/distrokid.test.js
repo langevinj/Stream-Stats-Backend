@@ -4,8 +4,7 @@
  *      Test suit for the Distrokid model.
  */
 
-const db = require("../db");
-const { NotFoundError, BadRequestError } = require('../expressError');
+const { NotFoundError } = require('../expressError');
 const Distrokid = require("./distrokid.js");
 const {
     commonBeforeAll,

@@ -135,6 +135,54 @@ Your own plays(while logged in) don’t count toward your stats.
 Stats are calculated based on Coordinated Universal Time(UTC).
 terms of use privacy copyright policy help`
 
+const distrokidTestData = `UPLOAD
+MY MUSIC
+TEAMS
+STATS
+UPGRADE
+BANK
+MORE
+▼
+
+All dates
+ 
+Test Band
+ 
+All releases
+ 
+All stores
+ DISPLAY 
+REPORTING MONTH	SALE MONTH	STORE	ARTIST	TITLE	QUANTITY	SONG/ALBUM	CUSTOMER PAID	COUNTRY OF SALE	EARNINGS (USD)
+Oct 2019	Sep 2019	Apple Music	Test Band	Test Song	1	Song	n/a	US	$0.009350790340
+100% of team
+Oct 2019	Sep 2019	Apple Music	Test Band	Test Song 2	9	Song	n/a	US	$0.031094302814
+100% of team
+Nov 2019	Sep 2019	Spotify	Test Band	Test Song 2	3	Song	n/a	US	$0.016208874159
+100% of team
+Nov 2019	Sep 2019	Spotify	Test Band	Test Song 	1	Song	n/a	US	$0.002925977284
+100% of team
+Dec 2019	Oct 2019	Apple Music	Test Band	Test Song 	1	Song	n/a	US	$0.004985070202
+Total	$5.86
+Grand total	$5.86
+Some info about earnings
+
+"N/a" in the "customer paid" column means that the customer didn't pay anything (example: Spotify streaming) or the store didn't tell us how much the customer paid (example: Amazon).
+
+The amount owed to you is rounded down to the nearest hundredth (1-cent). Fractions of cents will remain in your account however, so you should get them as they add up (unlike the plot of Office Space and Superman 3).
+Support Center - Got questions?
+DistroKid News - What's new with us
+Instagram - Watch our 1-minute help videos!
+Twitter - We tweet things sometimes
+Facebook - Let's be friends
+YouTube - More videos, yo.
+
+Privacy policy
+Cookie policy
+Cookie settings
+Terms of use
+Distribution agreement
+© DistroKid 2021`
+
 module.exports = {
     commonBeforeAll,
     commonBeforeEach,
@@ -143,5 +191,6 @@ module.exports = {
     u1Token,
     u2Token,
     adminToken,
-    bandcampMonthTestData
+    bandcampMonthTestData,
+    distrokidTestData
 };

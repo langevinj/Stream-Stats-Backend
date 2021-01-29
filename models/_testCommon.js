@@ -4,18 +4,17 @@ const db = require("../db.js");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
 async function commonBeforeAll() {
+    await db.query("DELETE FROM users");
     await db.query("DELETE FROM bandcamp_all_time");
     await db.query("DELETE FROM bandcamp_running");
-    await db.query("DELETE FROM distrokd");
-    await db.query("DELETE FROM spotify_all_time");
-    await db.query("DELETE FROM spotify_running");
-    await db.query("DELETE FROM users");
-
+    // await db.query("DELETE FROM distrokid");
+    // await db.query("DELETE FROM spotify_all_time");
+    // await db.query("DELETE FROM spotify_running");
+    
     await db.query(`
         INSERT INTO users(username, password, email)
-        VALUES ('u1', $1, 'u1@email.com')
-               ('u2', $2, 'u2@email.com')
-        RETURING username`,
+        VALUES ('u1', $1, 'u1@email.com'),
+               ('u2', $2, 'u2@email.com')`,
         [
             await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
             await bcrypt.hash("password2", BCRYPT_WORK_FACTOR)
@@ -23,18 +22,16 @@ async function commonBeforeAll() {
 
     await db.query(`
         INSERT INTO bandcamp_all_time(title, plays, username)
-        VALUES ('song1', $1, 'u1')
-               ('song2', $2, 'u1')
-               ('song3', $3, 'u2')
-        RETURNING username`, 
+        VALUES ('song1', $1, 'u1'),
+               ('song2', $2, 'u1'),
+               ('song3', $3, 'u2')`, 
         [100, 200, 300]);
 
     await db.query(`
         INSERT INTO bandcamp_running(title, plays, username)
-        VALUES ('song1', $1, 'u1')
-               ('song2', $2, 'u1')
-               ('song3', $3, 'u2')
-        RETURNING username`,
+        VALUES ('song1', $1, 'u1'),
+               ('song2', $2, 'u1'),
+               ('song3', $3, 'u2')`,
         [15, 25, 55]);
 }
 

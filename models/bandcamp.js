@@ -76,7 +76,7 @@ class Bandcamp {
     /**Get the Bandcamp data associate with a particular user. */
     static async getUserBandcampData(range="alltime", username){
         //Check that a user with the given username exists, if not throw an error.
-        const userRes = await db.query(
+        let userRes = await db.query(
             `SELECT username, is_admin as "isAdmin"
             FROM users
             WHERE username = $1`, [username]

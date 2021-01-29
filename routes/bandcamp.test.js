@@ -5,7 +5,7 @@
 const request = require("supertest");
 
 const app = require("../app");
-const { UnauthorizedError } = require("../expressError");
+const { UnauthorizedError, BadRequestError } = require("../expressError");
 
 const {
     commonBeforeAll,

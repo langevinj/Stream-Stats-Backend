@@ -95,3 +95,49 @@ describe("POST /users", function() {
         expect(resp.statusCode).toBe(400);
     });
 });
+
+/****************************GET /users/:username */
+
+describe("GET /users/:username", function() {
+    test("works for user", async function() {
+        const resp = await request(app)
+                    .get("/users/u1")
+                    .set("authorization", `Bearer ${u1Token}`);
+        expect(resp.statusCode).toBe(200);
+        expect(resp.body).toEqual({"user": {
+            "username": "u1",
+            "bandName": "band1",
+            "isAdmin": false,
+            "email": "user1@user.com"}
+        });
+    });
+
+    test("works for admin", async function() {
+        const resp = await request(app)
+            .get("/users/u1")
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toBe(200);
+        expect(resp.body).toEqual({
+            "user": {
+                "username": "u1",
+                "bandName": "band1",
+                "isAdmin": false,
+                "email": "user1@user.com"
+            }
+        });
+    });
+
+    test("unauth for non-user", async function() {
+        const resp = await request(app)
+            .get("/users/u1")
+            .set("authorization", `Bearer ${u2Token}`);
+        expect(resp.statusCode).toEqual(401);
+    });
+
+    test("notfound for invalid user", async function() {
+        const resp = await request(app)
+            .get("/users/u10")
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toEqual(404);
+    });
+});

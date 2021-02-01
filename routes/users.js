@@ -43,7 +43,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 
 /** GET /[username] => { user }
  *
- * Returns { username, bandName, isAdmin }
+ * Returns { username, bandName, email isAdmin }
  *
  * Authorization required: admin or same user-as-:username
  **/

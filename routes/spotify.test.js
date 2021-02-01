@@ -14,7 +14,8 @@ const {
     commonAfterAll,
     u1Token,
     u2Token,
-    adminToken
+    adminToken,
+    spotifyTestData
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -25,7 +26,17 @@ afterAll(commonAfterAll);
 /****************************POST /spotify/import/:username */
 
 describe("POST /spotify/import/:username", function() {
-    const data = { page: , range: "month"};
+    const data = { page: spotifyTestData, range: "month"};
+    const badData = { page: "This isn't right at all \n Really it isn't.", range: "alltime" };
 
-    
+    test("ok for user", async function() {
+        const resp = await request(app)
+                    .post("/spotify/import/u1")
+                    .send(data)
+                    .set("authorization", `Bearer ${u1Token}`);
+        expect(resp.statusCode).toBe(201);
+        expect(resp.body).toEqual({ "response": "Spotify 28 days"})
+    });
+
+
 });

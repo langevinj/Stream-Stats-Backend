@@ -14,8 +14,10 @@ const router = express.Router();
 
 /** POST /saveCredentials
  *      {username, password}
- * save a users username and password for Spotify for artists
+ * Save a users username and password for Spotify for artists
  */
+
+ /**Currently not in use! */
 
 router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) {
     try {
@@ -33,15 +35,16 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
 
 /** POST /gatherData
  *  {username}
- *      crawls Spotify for artists webpage and saves data to DB
+ *      Crawls Spotify for Artists webpage and saves data to DB.
  */
 
  router.post("/gatherData/:username", ensureCorrectUserOrAdmin, async function (req, res, next) {
      try {
-         const validator = jsonschema.validate(req.body, spotifyLoginSchema);
+        const validator = jsonschema.validate(req.body, spotifyLoginSchema);
         if(!validator.valid) {
             const errs = validator.errors.map(e => e.stack);
 
+            //Make errors user friendly to view.
             function makeCustomErrors(error){
                 if (error.includes("instance.email")) return "You didn't enter a valid email";
                 if (error.includes("instance.password")) return "You didn't enter a valid password";
@@ -49,7 +52,7 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
 
             const customErrs = errs.map(e => makeCustomErrors(e));
             throw new BadRequestError(customErrs);
-         }
+        }
 
          const response = await Spotify.crawlAndSave(req.body.email, req.body.password, req.params.username);
          return res.json({ response });
@@ -61,7 +64,7 @@ router.post("/saveCredentials", ensureLoggedIn, async function (req, res, next) 
 
 /** POST /import/:username
  * {page, range} => {response}
- *          take a raw page from the user, parse and save it to the DB
+ *          Take a raw page from the user, parse it and save it to the DB.
  * 
  * 
  * Authorization required: admin or correct user
@@ -76,7 +79,7 @@ router.post("/import/:username", ensureCorrectUserOrAdmin, async function (req, 
 });
 
 /**GET /:username { range } =>
- *      get spotify data for user with username
+ *      Get spotify data for user with username.
  *
  * Authorization required: correct user or admin
  */
@@ -89,7 +92,6 @@ router.post("/import/:username", ensureCorrectUserOrAdmin, async function (req, 
          return next(err);
      }
  });
-
 
 
 module.exports = router;

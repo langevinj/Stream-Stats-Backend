@@ -1,14 +1,14 @@
 "use strict";
+
 /** Routes for Bandcamp*/
 const express = require("express");
 const { ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const Bandcamp = require("../models/bandcamp");
-
 const router = express.Router();
 
 
-/** POST /import {page} => 
- *      take a raw page of data from the user, parse, and save it to the DB
+/** POST /import/:username {page} => 
+ *      Take a raw page of data from the user, parse it, and save it to the DB
  * 
  * Authorization required: correct user or admin
  */
@@ -22,8 +22,8 @@ router.post("/import/:username", ensureCorrectUserOrAdmin, async function (req, 
     }
 });
 
-/**GET /:username/:range { range } => {[title, plays, complete, partial, skip], ...}
- *      get bandcamp data for user with username
+/**GET /:username/:range => {[title, plays, complete, partial, skip], ...}
+ *      Get bandcamp data for user with username
  * 
  * Authorization required: correct user or admin
  */
@@ -36,8 +36,6 @@ router.post("/import/:username", ensureCorrectUserOrAdmin, async function (req, 
          return next(err);
      }
  });
-
-
 
 
 module.exports = router;

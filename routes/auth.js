@@ -51,6 +51,7 @@ router.post("/register", async function (req, res, next) {
         if (!validator.valid) {
             const errs = validator.errors.map(e => e.stack);
             
+            //Tailor errors to be user friendly. 
             function makeCustomErrors(error) {
                 if (error.includes("instance.email")) return "You didn't enter a valid email";
                 

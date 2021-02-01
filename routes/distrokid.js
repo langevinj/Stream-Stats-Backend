@@ -3,14 +3,13 @@
 /** Routes for Distrokid*/
 
 const express = require("express");
-const { BadRequestError } = require("../expressError");
 const { ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const Distrokid = require("../models/distrokid");
 
 const router = express.Router();
 
 /** POST /import/:username { page } => { response }
- *          take raw page data from the user, parse and save data to the DB
+ *          Take raw page data from the user, parse it and save data to the DB.
  * 
  * Authorization required: correct user or admin
   */
@@ -25,7 +24,7 @@ router.post("/import/:username", ensureCorrectUserOrAdmin, async function(req, r
 });
 
 /**GET /:username { range } => 
- *      get distrokid data for user with username
+ *      Get distrokid data for user with username.
  * 
  * Authorization required: correct user or admin
  */

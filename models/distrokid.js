@@ -3,7 +3,7 @@
 const jsonschema = require("jsonschema");
 const db = require("../db");
 const distrokidDataSchema = require("../schemas/distrokidData.json");
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, NotFoundError } = require("../expressError");
 const { distrokidParser } = require('../helpers/parsers'); 
 
 /** Functions for distrokid. */

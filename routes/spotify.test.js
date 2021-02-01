@@ -5,7 +5,7 @@
 const request = require("supertest");
 
 const app = require("../app");
-const { UnauthorizedError, BadRequestError, NotFoundError } = require("../expressError");
+const { UnauthorizedError } = require("../expressError");
 
 const {
     commonBeforeAll,
@@ -52,8 +52,8 @@ describe("POST /spotify/import/:username", function() {
             .post("/spotify/import/u1")
             .send(data)
             .set("authorization", `Bearer ${u2Token}`);
-        expect(resp.statusCode).toEqual(401)
-        expect(resp instanceof UnauthorizedError)
+        expect(resp.statusCode).toEqual(401);
+        expect(resp instanceof UnauthorizedError);
     });
 
     test("bad request with improper data", async function () {
@@ -63,6 +63,54 @@ describe("POST /spotify/import/:username", function() {
             .set("authorization", `Bearer ${u1Token}`);
         expect(resp.statusCode).toEqual(400);
     });
+});
 
+/****************************GET /spotify/:username/:range */
 
+describe("GET /spotify/:username/:range", function(){
+    it("gets the data for a user", async function () {
+        const resp = await request(app)
+            .get("/spotify/u1/month")
+            .set("authorization", `Bearer ${u1Token}`);
+        expect(resp.statusCode).toEqual(200);
+        expect(resp.body).toEqual({
+            "response": expect.any(Array)
+        });
+        expect(resp.body.response[0]).toEqual({
+            "title": "song2",
+            "streams": 300,
+            "listeners": 0
+        });
+    });
+
+    it("works for admin", async function () {
+        const resp = await request(app)
+            .get("/spotify/u1/month")
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toEqual(200);
+        expect(resp.body).toEqual({
+            "response": expect.any(Array)
+        });
+        expect(resp.body.response[0]).toEqual({
+            "title": "song2",
+            "streams": 300,
+            "listeners": 0
+        });
+    });
+
+    it("unath for non-admin", async function () {
+        const resp = await request(app)
+            .get("/spotify/u1/month")
+            .send({ "range": "alltime" })
+            .set("authorization", `Bearer ${u2Token}`);
+        expect(resp.statusCode).toBe(401);
+    });
+
+    it("notfound if user doesn't exist", async function () {
+        const resp = await request(app)
+            .get("/spotify/nope/month")
+            .send({ "range": "alltime" })
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toBe(404);
+    });
 });

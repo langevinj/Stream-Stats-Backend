@@ -5,7 +5,7 @@ const jsonschema = require("jsonschema");
 const spotifyDataSchema = require("../schemas/spotifyData.json");
 const { crawlSFA } = require("../s/spotifyForArtists/main");
 const { spotifyParser } = require("../helpers/parsers");
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, NotFoundError } = require("../expressError");
 
 /** Functions for Spotify */
 

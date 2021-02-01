@@ -145,6 +145,73 @@ Reporting Date	Sale Month	Store	Artist	Title	ISRC	UPC	Quantity	Team Percentage	S
 2019-12-04	2019-10	applemusic	Test Band	Test Song	QZHN41992903		4	100	Song	US	0	0.01391220
 2019-12-04	2019-10	applemusic	Test Band	Test Song	QZHN41992903		1	100	Song	AU	0	0.00910884`
 
+
+const spotifyTestData = `
+Skip to main page content
+
+Test Band
+Home
+Music
+Audience
+Profile
+Music
+Songs
+Releases
+Playlists
+Upcoming
+Search
+Search songs in your catalog
+Last 28 days
+#	TITLE		STREAMS	LISTENERS	VIEWS	SAVES	FIRST ADDED
+1	
+
+Song1
+34	8 	—	4	30 Mar 2020
+2	
+
+Song 2
+30	3 	—	—	30 Mar 2020
+3	
+
+Song 3
+29	3 	—	—	30 Mar 2020
+4	
+
+Song/4
+24	2 	—	—	19 Mar 2020
+5	
+
+Song 5
+20	1 	—	—	30 Mar 2020
+6	
+
+Song 6
+9	5 	—	—	16 Feb 2018
+7	
+
+Test Song
+4	3 	—	—	16 Feb 2018
+8	
+
+Song 8
+4	2 	—	—	16 Feb 2018
+9	
+Song 9
+3	2 	—	—	16 Feb 2018
+10	
+
+Song 10
+2	2 	—	—	16 Feb 2018
+11	
+
+Song11
+1	1 	—	—	16 Feb 2018
+Legal
+Privacy
+Cookies
+© 2021 Spotify AB
+`
+
 module.exports = {
     commonBeforeAll,
     commonBeforeEach,
@@ -154,5 +221,6 @@ module.exports = {
     u2Token,
     adminToken,
     bandcampMonthTestData,
-    distrokidTestData
+    distrokidTestData,
+    spotifyTestData
 };

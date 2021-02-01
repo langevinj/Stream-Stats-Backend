@@ -57,7 +57,7 @@ router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, nex
     }
 });
 
-/** GET /allSongs/[username] => {songs: [...]} 
+/** GET /allSongs/[username] => {songs: [{"title": "song1"}, ...]} 
  * 
  * Returns an array of all unique songs the user has in the DB.
  * 

@@ -112,6 +112,15 @@ class User {
 
     /** Given the username return all songs the user has in their data */
     static async getAllSongs(username){
+        const validUser = await db.query(`
+        SELECT username 
+        FROM users 
+        WHERE username = $1`, [username]);
+
+        const user = validUser.rows[0];
+
+        if (!user) throw new NotFoundError(`No user: ${username}`);
+
         const songRes = await db.query(
             `SELECT title FROM distrokid WHERE username = $1
             UNION

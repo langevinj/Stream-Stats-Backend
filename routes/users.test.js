@@ -141,3 +141,41 @@ describe("GET /users/:username", function() {
         expect(resp.statusCode).toEqual(404);
     });
 });
+
+/*****************************GET /users/allSongs/:username */
+
+describe("GET /users/allSongs/:username", function() {
+    test("gets all songs for a user", async function() {
+        const resp = await request(app)
+                    .get("/users/allSongs/u1")
+                    .set("authorization", `Bearer ${u1Token}`);
+        expect(resp.statusCode).toBe(200);
+        expect(resp.body).toEqual({"songs": expect.any(Array)});
+        expect(resp.body.songs).toHaveLength(3);
+        expect(resp.body.songs[0]).toEqual({"title": "song1"});
+    });
+
+    test("gets all songs for a user for admin", async function () {
+        const resp = await request(app)
+            .get("/users/allSongs/u1")
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toBe(200);
+        expect(resp.body).toEqual({ "songs": expect.any(Array) });
+        expect(resp.body.songs).toHaveLength(3);
+        expect(resp.body.songs[0]).toEqual({ "title": "song1" });
+    });
+
+    test("unauth for non-user or admin", async function() {
+        const resp = await request(app)
+            .get("/users/allSongs/u1")
+            .set("authorization", `Bearer ${u2Token}`);
+        expect(resp.statusCode).toEqual(401);
+    });
+    
+    test("notfound for invalid user", async function() {
+        const resp = await request(app)
+            .get("/users/allSongs/u10")
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toEqual(404);
+    });
+});

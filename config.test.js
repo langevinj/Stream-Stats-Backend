@@ -1,5 +1,7 @@
 "use strict";
 
+/**Tests for the config. Provided by Springboard. */
+
 describe("config can come from env", function () {
     test("works", function () {
         process.env.SECRET_KEY = "abc";

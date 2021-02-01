@@ -38,5 +38,31 @@ describe("POST /spotify/import/:username", function() {
         expect(resp.body).toEqual({ "response": "Spotify 28 days"})
     });
 
+    test("ok for admin", async function () {
+        const resp = await request(app)
+            .post("/spotify/import/u1")
+            .send(data)
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toBe(201);
+        expect(resp.body).toEqual({ "response": "Spotify 28 days" });
+    });
+
+    test("unauth for other non-admin user", async function() {
+        const resp = await request(app)
+            .post("/spotify/import/u1")
+            .send(data)
+            .set("authorization", `Bearer ${u2Token}`);
+        expect(resp.statusCode).toEqual(401)
+        expect(resp instanceof UnauthorizedError)
+    });
+
+    test("bad request with improper data", async function () {
+        const resp = await request(app)
+            .post("/spotify/import/u1")
+            .send(badData)
+            .set("authorization", `Bearer ${u1Token}`);
+        expect(resp.statusCode).toEqual(400);
+    });
+
 
 });

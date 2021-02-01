@@ -1,14 +1,12 @@
 'use strict'
 
-//crawler for Spotify for artists
+/** Crawler for Spotify for Artists.*/
+
 const puppeteer = require('puppeteer');
-const fs = require('fs');
-const { response } = require('express');
 
 async function crawlSFA({ email, password, username } ) {
 
-    // try {
-    //institute a new browser instance
+    //Initiate a new browser instance.
     const browser = await puppeteer.launch({
         headless: true,
         slowMo: 25,
@@ -16,22 +14,22 @@ async function crawlSFA({ email, password, username } ) {
     });
 
     const page = await browser.newPage();
-    // page.on('dialog', async dialog => {
-    //         console.log(dialog.message());
-    // });
 
+    //Set page headers.
     await page.setExtraHTTPHeaders({
         'Accept-Language': 'en-GB,en-US;q=0.9,en;q=0.8'
     });
 
+    //Set a more "real" user agent.
     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36');
+
     const C_OPTIMIZE = true;
 
+    //Block unecessary resources to eliminate some means of crawler blocking.
     if (C_OPTIMIZE) {
         await page.setRequestInterception(true);
         const block_ressources = ['image', 'stylesheet', 'media', 'font', 'texttrack', 'object', 'beacon', 'csp_report', 'imageset'];
         page.on('request', request => {
-            //if (request.resourceType() === 'image')
             if (block_ressources.indexOf(request.resourceType) > 0)
                 request.abort();
             else
@@ -39,14 +37,16 @@ async function crawlSFA({ email, password, username } ) {
         });
     }
 
-    //go to the spotify for artists login page
+    //Go to the Spotify for Artists login page.
     await page.goto('https://accounts.spotify.com/en/login?continue=https:%2F%2Fartists.spotify.com%2F');
 
-    //login the user
+    //Login the user.
     await page.type('#login-username', email);
     await page.type('#login-password', password);
 
     await page.click('#login-button');
+
+    //Check to make sure that the login was successful. If not, close the browser and indicator there was a login error.
     await page.waitForTimeout(5000);
     if (page.url() === 'https://accounts.spotify.com/en/login?continue=https:%2F%2Fartists.spotify.com%2F') {
         browser.close();
@@ -54,20 +54,14 @@ async function crawlSFA({ email, password, username } ) {
     } else {
         await page.waitForNavigation({ waitUntil: 'networkidle2' });
     }
-    
-    // page.waitForTimeout(1000);
 
-    //format the url properly to go to the correctly filtered page
+    //Format the url properly to go to the correctly filtered page.
     let filterIdx = await page.url().search('home');
     let filteredUrl = await page.url().substring(0, filterIdx);
-    console.log(`filteredURL is ${filteredUrl}`)
 
     await page.waitForTimeout(1000);
-    // page.goto(`${filteredUrl}music/songs?time-filter=28days`);
 
-    // await page.waitForTimeout(1000);
-
-    // navigate to stats page for last 28days
+    // Navigate to stats page for last 28days.
     await Promise.all([
         page.goto(`${filteredUrl}music/songs?time-filter=28days`),
         page.waitForSelector('tr[data-testid="sort-table-body-row"]')
@@ -75,7 +69,7 @@ async function crawlSFA({ email, password, username } ) {
 
     await page.waitForTimeout(1000)
 
-    //get data about past 28 days streams from the browser
+    //Get data about past 28 days of streams from the browser.
     const data = await page.$$eval('tr[data-testid="sort-table-body-row"]', $song => {
         const scrapedData = [];
 
@@ -93,12 +87,14 @@ async function crawlSFA({ email, password, username } ) {
 
     await page.waitForTimeout(1000);
 
-    //visit all time stats
+    //Visit the "All time" stats page.
     await Promise.all([
         page.goto(`${filteredUrl}music/songs?time-filter=all`),
         page.waitForSelector('tr[data-testid="sort-table-body-row"]')
     ]);
 
+
+    //Get data about the All times stream from the browser.
     const allData = await page.$$eval('tr[data-testid="sort-table-body-row"]', $song => {
         const scrapedData = [];
 
@@ -114,19 +110,15 @@ async function crawlSFA({ email, password, username } ) {
         return scrapedData;
     });
 
-    //write scraped data to a JSON file, if there is an error log it
-    // await fs.writeFile(`./spotifyData/spotify-${username}-allTime.json`, JSON.stringify(allData), err => err ? console.log(err) : null);
-    // console.log("All-time stats written");
-
     await page.waitForTimeout(1000);
-    let respData = { "30days": data, "allTime": allData }
+
+    const respData = { "30days": data, "allTime": allData }
 
     await page.waitForTimeout(100);
+
+    //Close the browser, return the stringified data.
     browser.close();
     return JSON.stringify(respData);
-// } catch (err) {
-//     console.log(err)
-// }
 }
 
 module.exports = { crawlSFA };

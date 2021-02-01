@@ -10,7 +10,6 @@ const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
 const { createToken } = require("../helpers/tokens");
 const userNewSchema = require("../schemas/userNew.json");
-// const userUpdateSchema = require("../schemas/userUpdate.json");
 
 const router = express.Router();
 
@@ -60,7 +59,7 @@ router.get("/:username", ensureCorrectUserOrAdmin, async function (req, res, nex
 
 /** GET /allSongs/[username] => {songs: [...]} 
  * 
- * Returns an array of all unique songs the user has in the DB
+ * Returns an array of all unique songs the user has in the DB.
  * 
  * Authorization requried: admin or same user
 */

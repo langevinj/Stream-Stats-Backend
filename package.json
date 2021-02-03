@@ -13,5 +13,23 @@
     "react-charts": "^2.0.0-beta.7",
     "supertest": "^6.1.3",
     "uuid": "^8.3.2"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langevinj/Stream-Stats-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/langevinj/Stream-Stats-Backend/issues"
+  },
+  "homepage": "https://github.com/langevinj/Stream-Stats-Backend#readme",
+  "description": ""
 }

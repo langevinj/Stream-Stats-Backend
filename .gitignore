@@ -1,3 +1,12 @@
 node_modules
-rawPages/
-spotifyData/
+#
+rawPages/*.txt
+
+#
+spotifyData/*.txt
+
+#
+# !rawData/.gitkeep
+
+# #
+# !spotifyData/.gitkeep

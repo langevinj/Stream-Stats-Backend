@@ -31,5 +31,9 @@
     "url": "https://github.com/langevinj/Stream-Stats-Backend/issues"
   },
   "homepage": "https://github.com/langevinj/Stream-Stats-Backend#readme",
-  "description": ""
+  "description": "",
+  "engines": {
+    "node": "15.0.1",
+    "npm": "6.14.11"
+  }
 }

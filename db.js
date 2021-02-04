@@ -5,12 +5,19 @@
 const { Client } = require("pg");
 const { getDatabaseUri } = require("./config");
 
-const testSetup = process.env.NODE_ENV === "test" ? { connectionString: getDatabaseUri()} : { connectionString: getDatabaseUri(),
-    ssl: {
-    rejectUnauthorized: false
-}}
+let localSetup;
+if(process.env.NODE_ENV === "test" || !process.env.PORT){
+    localSetup = {connectionString: getDatabaseUri()};
+} else {
+    localSetup = {
+        connectionString: getDatabaseUri(),
+            ssl: {
+            rejectUnauthorized: false
+        }
+    }
+}
 
-const db = new Client(testSetup);
+const db = new Client(localSetup);
 
 db.connect();
 

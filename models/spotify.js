@@ -9,6 +9,11 @@ const { BadRequestError, NotFoundError } = require("../expressError");
 
 /** Functions for Spotify */
 
+/** The data uses for this portion of the application comes directly from Spotify for Artists
+ * https://artists.spotify.com/
+ * Without this data, this portion of the application would not be possible.
+*/
+
 class Spotify {
 
     /**Save a users Spotify credentials. Currently not in use.

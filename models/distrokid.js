@@ -8,6 +8,11 @@ const { distrokidParser } = require('../helpers/parsers');
 
 /** Functions for distrokid. */
 
+/**The data used for these functions comes directly from Distrokid's 'Bank' page
+ * https://distrokid.com/
+ * Without the statistics gathered from Distrokid this application would not be possible.
+*/
+
 class Distrokid {
 
     //Parse the raw data from the user.

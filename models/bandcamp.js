@@ -8,6 +8,11 @@ const bandcampDataSchema = require("../schemas/bandcampData.json");
 
 /** Functions for bandcamp. */
 
+/**
+ * Data gathered for this application comes from Bandcamp https://bandcamp.com/
+ * Without their Artist's 'Stats' page this would not be possible
+ */
+
 class Bandcamp {
 
     //Parse the raw data from the user.

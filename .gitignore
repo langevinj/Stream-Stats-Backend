@@ -3,7 +3,7 @@ node_modules
 rawPages/*.txt
 
 #
-spotifyData/*.txt
+spotifyData/*.json
 
 #
 # !rawData/.gitkeep
